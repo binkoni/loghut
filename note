@@ -1,0 +1,19 @@
+- This project should be rewritten in Java
+- You should use Freemarker, Spring, Gradle for more efficient development
+- Use Tomcat as a WAS
+
+-MVC pattern
+-- model(modelMap)
+-- view
+-- controller
+-- service
+-- DAO
+-- DTO
+
+- Multilayered architecture
+-- view layer(render view using provided model)
+-- controller layer(http related tasks, access to service,
+    pass model to the view)
+-- service layer(DTO manipulation, caching, access to DAO)
+-- DAO layer(local filesystem related CRUD operations)
+
