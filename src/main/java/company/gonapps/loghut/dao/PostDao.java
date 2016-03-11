@@ -186,11 +186,11 @@ public class PostDao {
 		    rrwl.readLock().unlock();
 		}
 		
-		post.setTitle(document.select("#post_title").first().text());
-	    post.setText(document.select("#post_text").first().html());
+        post.setTitle(document.select("#loghut-post-title").first().text());
+        post.setText(document.select("#loghut-post-text").first().html());
 	    List<TagDto> tags = new LinkedList<>();
 	    
-	    for(Element tagElement : document.select("#post_tags").first().children()) {
+	    for(Element tagElement : document.select("#loghut-post-tags").first().children()) {
 	    	if(tagElement.text().matches("\\s*")) continue;
 			tags.add(new TagDto().setName(tagElement.text()));
 	    }

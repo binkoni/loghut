@@ -29,7 +29,7 @@
                 </div>
                 <hr class="red_hr"/>
             </div>
-            <div id="post_title" class="span12 text_align" style="font-size:3rem">${post.title}</div>
+            <div id="loghut-post-title" class="span12 text_align" style="font-size:3rem">${post.title}</div>
             <hr class="black_hr"/>
         </header>
         <main>
@@ -45,10 +45,10 @@
                 (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
             </div>
-            <article id="post_text" class="span10_center" style="background-color:white;border:0.5rem solid black;padding:2.5%">
+            <article id="loghut-post-text" class="span10_center" style="background-color:white;border:0.5rem solid black;padding:2.5%">
                 ${post.text}
             </article>
-            <div id="post_tags" class="span10_center vertical_align_tops" style="padding-left:2.5%;padding-right:2.5%;border-left:0.5rem solid black;border-right:0.5rem solid black;border-bottom:0.5rem solid black">
+            <div id="loghut-post-tags" class="span10_center vertical_align_tops" style="padding-left:2.5%;padding-right:2.5%;border-left:0.5rem solid black;border-right:0.5rem solid black;border-bottom:0.5rem solid black">
                 Tags: 
                 <#list post.tags as tag>
                     <a href="${settings.getSetting('tag.url')}${tag.path}">${tag.name}</a>
