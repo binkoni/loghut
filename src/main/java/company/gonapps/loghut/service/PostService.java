@@ -1,11 +1,13 @@
 package company.gonapps.loghut.service;
 
 import java.io.OutputStream;
+import java.nio.file.NoSuchFileException;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,31 +20,52 @@ import company.gonapps.loghut.filter.Filter;
 
 @Service
 public class PostService {
+	
 	private PostDao postDao;
 	private TagService tagService;
 	
 	private List<PostDto> postObjectCache;
 	private Map<String, PostDto> postCache = new HashMap<>();
 	
+	private ReentrantReadWriteLock rrwl = new ReentrantReadWriteLock();
+	
 	private PostDto getLatestPostObject() throws Exception {
-		if(postObjectCache == null)
+		rrwl.readLock().lock();
+		if(postObjectCache == null) {
+			rrwl.readLock().unlock();
+		    rrwl.writeLock().lock();
 			postObjectCache = postDao.getPostObjects();
-		return postObjectCache.get(0);
+			rrwl.writeLock().unlock();
+		} else rrwl.readLock().unlock();
+		rrwl.readLock().lock();
+		PostDto postObject = postObjectCache.get(0);
+		rrwl.readLock().unlock();
+		return postObject;
 	}
 	
 	private PostDto getLatestPublicPostObject() throws Exception {
-		if(postObjectCache == null)
+		rrwl.readLock().lock();
+		if(postObjectCache == null) {
+			rrwl.readLock().unlock();
+			rrwl.writeLock().lock();
 			postObjectCache = postDao.getPostObjects();
+			rrwl.writeLock().unlock();
+		} else rrwl.readLock().unlock();
 		int i = 0;
+		rrwl.readLock().lock();
 		for(; postObjectCache.get(i).getSecretEnabled(); i++) {}
-		return postObjectCache.get(i);
+		PostDto postObject = postObjectCache.get(i);
+		rrwl.readLock().unlock();
+		return postObject;
 	}
 	
 	private PostDto getLatestPublicPost() throws Exception {
 		PostDto latestPublicPostObject = getLatestPublicPostObject();
+		rrwl.readLock().lock();
 		PostDto latestPublicPost = postCache.get(latestPublicPostObject.getLocalPath());
 		if(latestPublicPost == null)
 			latestPublicPost = postDao.get(latestPublicPostObject);
+		rrwl.readLock().unlock();
 		return latestPublicPost;
 	}
 
@@ -96,19 +119,25 @@ public class PostService {
 		for(TagDto tag : post.getTags())
         	tagService.create(tag);
 		
+		rrwl.writeLock().lock();
 		postObjectCache.add(0, post);
 		postCache.put(post.getLocalPath(), post);
+		rrwl.writeLock().unlock();
 	}
 	
 	public PostDto get(int year, int month, int day, int number, boolean secretEnabled)
 			throws Exception {
 		
 		PostDto postObject = postDao.getPostObject(year, month, day, number, secretEnabled);
+		rrwl.readLock().lock();
 		PostDto post = postCache.get(postObject.getLocalPath());
+		rrwl.readLock().unlock();
 		
 		if(post == null) {
 			post = postDao.get(postObject);
+			rrwl.writeLock().lock();
 			postCache.put(post.getLocalPath(), post);
+			rrwl.writeLock().unlock();
 		}
 		
 		return post;
@@ -116,17 +145,25 @@ public class PostService {
 
 	public SearchResult search(int pageUnit, int page, Filter<PostDto> filter)
 			throws Exception {
-
-		if(postObjectCache == null)
+        rrwl.readLock().lock();
+		if(postObjectCache == null) {
+			rrwl.readLock().unlock();
+			rrwl.writeLock().lock();
 			postObjectCache = postDao.getPostObjects();
+			rrwl.writeLock().unlock();
+		} else rrwl.readLock().unlock();
 		
 		List<PostDto> posts = new LinkedList<>();
 		
     	for(PostDto postObject : postObjectCache) {
+    		rrwl.readLock().lock();
     		PostDto post = postCache.get(postObject.getLocalPath());
+    		rrwl.readLock().unlock();
     		if(post == null) {
     			post = postDao.get(postObject);
+    			rrwl.writeLock().lock();
     			postCache.put(post.getLocalPath(), post);
+    			rrwl.writeLock().unlock();
     		}
 			
 			if(filter == null || (filter != null && filter.test(post))) {
@@ -155,12 +192,15 @@ public class PostService {
     public void modify(PostDto oldPostObject, PostDto newPost) throws Exception {
     	
     	postDao.delete(oldPostObject);
-    	
+    	rrwl.readLock().lock();
     	PostDto oldPost = postCache.get(oldPostObject.getLocalPath());
+    	rrwl.readLock().unlock();
     	if(oldPost == null) oldPost = postDao.get(oldPostObject);
     	
+    	rrwl.writeLock().lock();
     	postObjectCache = null;
     	postCache.remove(oldPost.getLocalPath());
+    	rrwl.writeLock().unlock();
     	
     	for(TagDto tag : oldPost.getTags())
 	        tagService.delete(tag);
@@ -180,8 +220,13 @@ public class PostService {
 	}
     
     public void refreshAll() throws Exception {
-    	if(postObjectCache == null)
-    		postObjectCache = postDao.getPostObjects(); 
+    	rrwl.readLock().lock();
+    	if(postObjectCache == null) {
+    		rrwl.readLock().unlock();
+    		rrwl.writeLock().lock();
+    		postObjectCache = postDao.getPostObjects();
+    		rrwl.writeLock().unlock();
+    	} else rrwl.readLock().unlock();
     	List<PostDto> posts = postDao.getList(postObjectCache);
     	
     	for(PostDto post : posts) {
@@ -206,18 +251,23 @@ public class PostService {
     }
     
     public void delete(PostDto postObject) throws Exception {
-    	
+    	rrwl.readLock().lock();
     	PostDto post = postCache.get(postObject.getLocalPath());
+    	rrwl.readLock().unlock();
     	if(post == null) post = postDao.get(postObject);
     	
+    	rrwl.writeLock().lock();
     	postObjectCache = null;
     	postCache.remove(post.getLocalPath());
+    	rrwl.writeLock().unlock();
     	
     	for(TagDto tag : post.getTags())
 	        tagService.delete(tag);
     	
     	postDao.delete(post);
-    	postDao.deleteCompression(post);
+    	try {
+    	    postDao.deleteCompression(post);
+    	} catch(NoSuchFileException exception) {}
     	
     	if(postDao.monthExists(post.getYear(), post.getMonth())) {
     		postDao.createPostIndex(post.getYear(), post.getMonth());

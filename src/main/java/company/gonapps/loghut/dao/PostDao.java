@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,6 +46,12 @@ import freemarker.template.TemplateNotFoundException;
 @Repository
 public class PostDao {
 	
+	private static final Pattern postPathStringPattern = 
+			Pattern.compile(
+					"(?<year>\\d\\d\\d\\d)/(?<month>\\d\\d)/(?<day>\\d\\d)_(?<number>\\d+)\\.html(?<secret>s?)$");
+	private static final Pattern postYearPattern = Pattern.compile("/(\\d\\d\\d\\d)$");
+	private static final Pattern postMonthPattern = Pattern.compile("/(\\d\\d)$");
+	
 	private SettingDao settingDao;
 	
 	private FreeMarkerConfigurer freeMarkerConfigurer;
@@ -55,9 +62,7 @@ public class PostDao {
 	private Template monthIndexTemplate;
 	private Template postIndexTemplate;
 	
-	private static Pattern postPathStringPattern = 
-			Pattern.compile(
-					"(?<year>\\d\\d\\d\\d)/(?<month>\\d\\d)/(?<day>\\d\\d)_(?<number>\\d+)\\.html(?<secret>s?)$");
+	private ReentrantReadWriteLock rrwl = new ReentrantReadWriteLock();
 	
 	private String getPostPathString(PostDto post) {
 		return settingDao.getSetting("post.directory") + post.getLocalPath();
@@ -99,29 +104,35 @@ public class PostDao {
 	}
 	
 	public void create(PostDto post) throws IOException, TemplateException {
+		if(postTemplate == null)
+			postTemplate
+			= freeMarkerConfigurer.getConfiguration().getTemplate("post.ftl");
+		
 		StringWriter temporaryBuffer = new StringWriter();
 		Map<String, Object> modelMap = new HashMap<>();
 		modelMap.put("settings", settingDao);
 		modelMap.put("post", post);
-		if(postTemplate == null)
-			postTemplate
-			= freeMarkerConfigurer.getConfiguration().getTemplate("post.ftl");
 		postTemplate.process(modelMap, temporaryBuffer);
 		
 		Path postPath = Paths.get(getPostPathString(post));
+		rrwl.writeLock().lock();
 		Files.createDirectories(postPath.getParent());
-		
         try(BufferedWriter bufferedWriter
         		= new BufferedWriter(new FileWriter(postPath.toFile()))) {
             bufferedWriter.write(temporaryBuffer.toString());
+        } finally {
+        	rrwl.writeLock().unlock();
         }
 	}
 	
 	public void compress(PostDto post) throws IOException {
-		try(BufferedOutputStream bufferedOutputStream
+		rrwl.writeLock().lock();
+		try(BufferedOutputStream bos
 				= new BufferedOutputStream(
 						new FileOutputStream(getPostPathString(post) + ".gz"))) {
-			FileUtils.compress(getPostPathString(post), bufferedOutputStream);
+			FileUtils.compress(getPostPathString(post), bos);
+		} finally {
+			rrwl.writeLock().unlock();
 		}
 	}
 	
@@ -133,17 +144,25 @@ public class PostDao {
 		.setSecretEnabled(secretEnabled);
 	}
 	
-	public List<PostDto> getPostObjects() throws IOException {		
-		List<PostDto> postObjects = new LinkedList<>();
+	public List<PostDto> getPostObjects() throws IOException {
 		
-        for(String postPathString : FileUtils.scan(settingDao.getSetting("post.directory"))) {
-			Matcher matcher = postPathStringPattern.matcher(postPathString);
-			if(! matcher.find()) continue;
-			postObjects.add(getPostObject(new Integer(matcher.group("year")),
-					new Integer(matcher.group("month")),
-					new Integer(matcher.group("day")),
-					new Integer(matcher.group("number")),
-					matcher.group("secret").equals("s")));
+		rrwl.writeLock().lock();
+		List<PostDto> postObjects = new LinkedList<>();
+		rrwl.writeLock().unlock();
+		
+		rrwl.readLock().lock();
+		try {
+            for(String postPathString : FileUtils.scan(settingDao.getSetting("post.directory"))) {
+    			Matcher matcher = postPathStringPattern.matcher(postPathString);
+			    if(! matcher.find()) continue;
+			    postObjects.add(getPostObject(new Integer(matcher.group("year")),
+					    new Integer(matcher.group("month")),
+					    new Integer(matcher.group("day")),
+					    new Integer(matcher.group("number")),
+					    matcher.group("secret").equals("s")));
+		    }
+		} finally {
+            rrwl.readLock().unlock();
 		}
         
         Collections.sort(postObjects, new PostDtoComparator());
@@ -152,14 +171,20 @@ public class PostDao {
 	}
 	
 	public PostDto get(PostDto postObject) throws IOException, InvalidTagNameException {
+		
 		PostDto post = getPostObject(postObject.getYear(),
 				postObject.getMonth(),
 				postObject.getDay(),
 				postObject.getNumber(), 
 				postObject.getSecretEnabled());
 		
-		Document document
-		= Jsoup.parse(new File(getPostPathString(post)), "UTF-8");
+		rrwl.readLock().lock();
+		Document document;
+		try {
+			document = Jsoup.parse(new File(getPostPathString(post)), "UTF-8");
+		} finally {
+		    rrwl.readLock().unlock();
+		}
 		
 		post.setTitle(document.select("#post_title").first().text());
 	    post.setText(document.select("#post_text").first().html());
@@ -185,7 +210,8 @@ public class PostDao {
 	public List<PostDto> getList(int year, int month) throws IOException, InvalidTagNameException {
 		List<PostDto> posts = new LinkedList<>();
 		
-		try(DirectoryStream<Path> directoryStream
+		rrwl.readLock().lock();
+		try(DirectoryStream<Path> ds
 				= Files.newDirectoryStream(
 						Paths.get(settingDao.getSetting("post.directory") 
 						+ "/"
@@ -193,7 +219,7 @@ public class PostDao {
 						+ "/"
 						+ String.format("%02d", month)))) {
 			
-			for(Path path : directoryStream) {
+			for(Path path : ds) {
 				Matcher matcher = postPathStringPattern.matcher(path.toString()); 
 				if(matcher.find())
 					posts.add(get(Integer.parseInt(matcher.group("year")),
@@ -202,7 +228,10 @@ public class PostDao {
 							Integer.parseInt(matcher.group("number")),
 							(matcher.group("secret").equals("s"))));
 			}
+		} finally {
+			rrwl.readLock().unlock();
 		}
+		
 		Collections.sort(posts, new PostDtoComparator());
 
 		return posts;
@@ -210,8 +239,12 @@ public class PostDao {
 	
 	public List<PostDto> getList(List<PostDto> postObjects) throws IOException, InvalidTagNameException {
 		List<PostDto> posts = new LinkedList<>();
-		for(PostDto postObject : postObjects) {
-			posts.add(get(postObject));
+		rrwl.readLock().lock();
+		try {
+		    for(PostDto postObject : postObjects)
+    			posts.add(get(postObject));
+		} finally {
+			rrwl.readLock().unlock();
 		}
 		return posts;
 	}
@@ -223,9 +256,13 @@ public class PostDao {
 		filePaths.add(settingDao.getSetting("blog.directory") + "/index.html.gz");
 		filePaths.add(settingDao.getSetting("post.directory"));
 		filePaths.add(settingDao.getSetting("tag.directory"));
-        try(GzipCompressorOutputStream gzipCompressorOutputStream
+		
+		rrwl.writeLock().lock();
+        try(GzipCompressorOutputStream gcos
         		= new GzipCompressorOutputStream(new BufferedOutputStream(outputStream))) {
-        	FileUtils.archive(filePaths, gzipCompressorOutputStream);
+        	FileUtils.archive(filePaths, gcos);
+        } finally {
+        	rrwl.writeLock().unlock();
         }
 	}
 	
@@ -233,74 +270,106 @@ public class PostDao {
 		
 		Path postPath = Paths.get(getPostPathString(post));
 		
-		Files.delete(postPath);
+		rrwl.writeLock().lock();
+		try {
+    		Files.delete(postPath);
 		
-		FileUtils.rmdir(postPath.getParent(), new DirectoryStream.Filter<Path>() {
-			@Override
-			public boolean accept(Path path) throws IOException {
-				return ! postPathStringPattern.matcher(path.toString()).find();
-			}	
-    	}); 
+    		FileUtils.rmdir(postPath.getParent(), new DirectoryStream.Filter<Path>() {
+			    @Override
+			    public boolean accept(Path path) throws IOException {
+    				return ! postPathStringPattern.matcher(path.toString()).find();
+			    }	
+    	    }); 
 		
-    	FileUtils.rmdir(postPath.getParent().getParent(),
-    			new DirectoryStream.Filter<Path>() {
-			@Override
-			public boolean accept(Path path) throws IOException {
-				return (! Pattern.compile("/\\d\\d$").matcher(path.toString()).find())
-						|| (! Files.isDirectory(path));
-			}
-    	});
+    	    FileUtils.rmdir(postPath.getParent().getParent(),
+    			    new DirectoryStream.Filter<Path>() {
+			    @Override
+			    public boolean accept(Path path) throws IOException {
+    				return (! postMonthPattern.matcher(path.toString()).find())
+						    || (! Files.isDirectory(path));
+			    }
+    	    });
+		} finally {
+			rrwl.writeLock().unlock();
+		}
 	}
 	
 	public void deleteCompression(PostDto post) throws IOException {
-		Files.delete(Paths.get(getPostPathString(post) + ".gz"));
+		rrwl.writeLock().lock();
+		try {
+		    Files.delete(Paths.get(getPostPathString(post) + ".gz"));
+		} finally {
+			rrwl.writeLock().unlock();
+		}
 	}
 	
 	public boolean yearExists(int year) {
-		return Files.exists(Paths.get(settingDao.getSetting("post.directory") 
-				+ "/"
-				+ String.format("%04d", year)));		
+		rrwl.readLock().lock();
+		boolean exists; 
+		try {
+		    exists = Files.exists(Paths.get(settingDao.getSetting("post.directory") 
+				    + "/"
+				    + String.format("%04d", year)));
+		} finally {
+		    rrwl.readLock().unlock();
+		}
+		return exists;
 	}
 	
 	public boolean monthExists(int year, int month) {
-		return Files.exists(Paths.get(settingDao.getSetting("post.directory") 
-				+ "/"
-				+ String.format("%04d", year)
-				+ "/"
-				+ String.format("%02d", month)));
+		boolean exists;
+		rrwl.readLock().lock();
+		try {
+		    exists = Files.exists(Paths.get(settingDao.getSetting("post.directory") 
+				    + "/"
+				    + String.format("%04d", year)
+				    + "/"
+				    + String.format("%02d", month)));
+		} finally {
+			rrwl.readLock().unlock();
+		}
+		return exists;
 	}
 	
 	public List<String> getYears() throws IOException {
 		List<String> years = new LinkedList<>();
-		Pattern pattern = Pattern.compile("/(\\d\\d\\d\\d)$");
-		try(DirectoryStream<Path> directoryStream
+		
+		rrwl.readLock().lock();
+		try(DirectoryStream<Path> ds
 				= Files.newDirectoryStream(Paths.get(settingDao.getSetting("post.directory")))) {
-			for(Path path : directoryStream) {
-				Matcher matcher = pattern.matcher(path.toString()); 
+			for(Path path : ds) {
+				Matcher matcher = postYearPattern.matcher(path.toString()); 
 				if(matcher.find() && Files.isDirectory(path))
 					years.add(matcher.group(1));
 			}
+		} finally {
+			rrwl.readLock().unlock();
 		}
+		
 		Collections.sort(years, new YearComparator());
 		return years;
 	}
 	
 	public List<String> getMonths(int year) throws IOException {
 		List<String> months = new LinkedList<>();
-		Pattern pattern = Pattern.compile("/(\\d\\d)$");
-		try(DirectoryStream<Path> directoryStream
+		
+		rrwl.readLock().lock();
+		try(DirectoryStream<Path> ds
 				= Files.newDirectoryStream(
 						Paths.get(settingDao.getSetting("post.directory") 
 						+ "/"
 						+ String.format("%04d", year)))) {
 			
-			for(Path path : directoryStream) {
-				Matcher matcher = pattern.matcher(path.toString()); 
+			for(Path path : ds) {
+				Matcher matcher = postMonthPattern.matcher(path.toString()); 
 				if(matcher.find() && Files.isDirectory(path))
 					months.add(matcher.group(1));
 			}
 		}
+		rrwl.readLock().unlock();
+		
 		Collections.sort(months, new MonthComparator());
+		
 		return months;
 	}
 	
@@ -310,118 +379,152 @@ public class PostDao {
 			MalformedTemplateNameException,
 			ParseException,
 	        TemplateException {
+		
+		if(yearIndexTemplate == null) yearIndexTemplate
+		= freeMarkerConfigurer.getConfiguration().getTemplate("year_index.ftl");
+		
 		List<String> years = getYears();
 		StringWriter temporaryBuffer = new StringWriter();
 		Map<String, Object> modelMap = new HashMap<>();
 		modelMap.put("settings", settingDao);
 		modelMap.put("years", years);
-		if(yearIndexTemplate == null) yearIndexTemplate
-		= freeMarkerConfigurer.getConfiguration().getTemplate("year_index.ftl");
 		yearIndexTemplate.process(modelMap, temporaryBuffer);
 		
         Path yearIndexPath = Paths.get(getYearIndexPathString());
+        rrwl.writeLock().lock();
 		Files.createDirectories(yearIndexPath.getParent());
-		
         try(BufferedWriter bufferedWriter
         		= new BufferedWriter(new FileWriter(yearIndexPath.toFile()))) {
             bufferedWriter.write(temporaryBuffer.toString());
+        } finally {
+            rrwl.writeLock().unlock();
         }
 	}
 	
 	public void compressYearIndex() throws IOException {
 		String yearIndexPathString = getYearIndexPathString();
+		
+		rrwl.writeLock().lock();
 		try(BufferedOutputStream bufferedOutputStream
 				= new BufferedOutputStream(
 						new FileOutputStream(yearIndexPathString + ".gz"))) {
 			FileUtils.compress(yearIndexPathString, bufferedOutputStream);
+		} finally {
+			rrwl.writeLock().unlock();
 		}
 	}
 		
 	public void createMonthIndex(int year)
 			throws IOException,
 			TemplateException {
+		
+		if(monthIndexTemplate == null)
+			monthIndexTemplate
+			= freeMarkerConfigurer.getConfiguration().getTemplate("month_index.ftl");
+		
 		List<String> months = getMonths(year);
 		StringWriter temporaryBuffer = new StringWriter();
 		Map<String, Object> modelMap = new HashMap<>();
 		modelMap.put("settings", settingDao);
 		modelMap.put("months", months);
-		if(monthIndexTemplate == null)
-			monthIndexTemplate
-			= freeMarkerConfigurer.getConfiguration().getTemplate("month_index.ftl");
 		monthIndexTemplate.process(modelMap, temporaryBuffer);
 		
 		Path monthIndexPath = Paths.get(getMonthIndexPathString(year));
+		rrwl.writeLock().lock();
 		Files.createDirectories(monthIndexPath.getParent());
-		
         try(BufferedWriter bufferedWriter
         		= new BufferedWriter(new FileWriter(monthIndexPath.toFile()))) {
             bufferedWriter.write(temporaryBuffer.toString());
+        } finally {
+        	rrwl.writeLock().unlock();
         }
 	}
 	
 	public void compressMonthIndex(int year) throws IOException {
+		
 		String monthIndexPathString = getMonthIndexPathString(year);
+		rrwl.writeLock().lock();
 		try(BufferedOutputStream bufferedOutputStream
 				= new BufferedOutputStream(
 						new FileOutputStream(monthIndexPathString + ".gz"))) {
 			FileUtils.compress(monthIndexPathString, bufferedOutputStream);
+		} finally {
+			rrwl.writeLock().unlock();
 		}
+		
 	}
 	
 	public void createPostIndex(int year, int month)
 			throws IOException, 
 			TemplateException,
 			InvalidTagNameException {
+		
+		if(postIndexTemplate == null)
+			postIndexTemplate
+			= freeMarkerConfigurer.getConfiguration().getTemplate("post_index.ftl");
+		
 		List<PostDto> posts = getList(year, month);
+		
 		StringWriter temporaryBuffer = new StringWriter();
 		Map<String, Object> modelMap = new HashMap<>();
 		modelMap.put("settings", settingDao);
 		modelMap.put("posts", posts);
-		if(postIndexTemplate == null)
-			postIndexTemplate
-			= freeMarkerConfigurer.getConfiguration().getTemplate("post_index.ftl");
 		postIndexTemplate.process(modelMap, temporaryBuffer);
-		
+
 		Path postIndexPath = Paths.get(getPostIndexPathString(year, month));
+		rrwl.writeLock().lock();
 		Files.createDirectories(postIndexPath.getParent());
-		
         try(BufferedWriter bufferedWriter
         		= new BufferedWriter(new FileWriter(postIndexPath.toFile()))) {
             bufferedWriter.write(temporaryBuffer.toString());
+        } finally {
+        	rrwl.writeLock().unlock();
         }
 	}
 	
 	public void compressPostIndex(int year, int month) throws IOException {
+		
 		String postIndexPathString = getPostIndexPathString(year, month);
+		rrwl.writeLock().lock();
 		try(BufferedOutputStream bufferedOutputStream
 				= new BufferedOutputStream(
 						new FileOutputStream(postIndexPathString + ".gz"))) {
 		    FileUtils.compress(postIndexPathString, bufferedOutputStream);
+		} finally {
+			rrwl.writeLock().unlock();
 		}
 	}
 	
 	public void createMainIndex(PostDto post) throws IOException, TemplateException {
+		
+		if(mainIndexTemplate == null) mainIndexTemplate 
+		= freeMarkerConfigurer.getConfiguration().getTemplate("main_index.ftl");
+		
 		StringWriter temporaryBuffer = new StringWriter();
 		Map<String, Object> modelMap = new HashMap<>();
 		modelMap.put("settings", settingDao);
 		modelMap.put("post", post);
-		if(mainIndexTemplate == null) mainIndexTemplate 
-		= freeMarkerConfigurer.getConfiguration().getTemplate("main_index.ftl");
 		mainIndexTemplate.process(modelMap, temporaryBuffer);
 		
 		Path mainIndexPath = Paths.get(getMainIndexPathString());
+		rrwl.writeLock().lock();
 		Files.createDirectories(mainIndexPath.getParent());
-		
         try(BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(mainIndexPath.toFile()))) {
             bufferedWriter.write(temporaryBuffer.toString());
+        } finally {
+        	rrwl.writeLock().unlock();
         }
 	}
 	
 	public void compressMainIndex() throws IOException {
+		
 		String mainIndexPathString = getMainIndexPathString();
+		rrwl.writeLock().lock();
 		try(BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(
 				new FileOutputStream(mainIndexPathString + ".gz"))) {
 			FileUtils.compress(mainIndexPathString, bufferedOutputStream);
+		} finally {
+			rrwl.writeLock().unlock();
 		}
 	}
 }

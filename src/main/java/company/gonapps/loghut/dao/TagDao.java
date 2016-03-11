@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,7 +27,6 @@ import company.gonapps.loghut.comparator.YearComparator;
 import company.gonapps.loghut.dto.TagDto;
 import company.gonapps.loghut.exception.InvalidTagNameException;
 import company.gonapps.loghut.utils.FileUtils;
-
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
@@ -34,14 +34,18 @@ import freemarker.template.TemplateException;
 public class TagDao {
 	private SettingDao settingDao;
 	private PostDao postDao;
-	private static Pattern tagPathStringPattern = 
+	private static final Pattern tagPathStringPattern = 
 			Pattern.compile(
 					"(?<name>.+)/(?<year>\\d\\d\\d\\d)/(?<month>\\d\\d)/(?<day>\\d\\d)_(?<number>\\d+)\\.html(?<secret>s?)$");
+	private static final Pattern tagYearPattern = Pattern.compile("/(\\d\\d\\d\\d)$");
+	private static final Pattern tagMonthPattern = Pattern.compile("/(\\d\\d)$");
 	private FreeMarkerConfigurer freeMarkerConfigurer;
 	private Template tagNameIndexTemplate;
 	private Template yearIndexTemplate;
 	private Template monthIndexTemplate;
 	private Template tagIndexTemplate;
+	
+	private ReentrantReadWriteLock rrwl = new ReentrantReadWriteLock();
 		
 	@Autowired
 	public void setSettingDao(SettingDao settingDao) {
@@ -59,55 +63,81 @@ public class TagDao {
 	}
 	
     public boolean tagNameExists(String tagName) {
-    	return Files.exists(Paths.get(settingDao.getSetting("tag.directory")
-			    + "/"
-			    + tagName));
+    	boolean exists;
+    	rrwl.readLock().lock();
+    	try {
+    		exists = Files.exists(Paths.get(settingDao.getSetting("tag.directory")
+    				+ "/"
+    				+ tagName));
+    	} finally {
+    		rrwl.readLock().unlock();
+    	}
+    	return exists;
     }
     
     public boolean yearExists(String tagName, int year) {
-    	return Files.exists(Paths.get(settingDao.getSetting("tag.directory")
-			    + "/"
-			    + tagName
-				+ "/"
-				+ String.format("%04d", year)));
+    	boolean exists;
+    	rrwl.readLock().lock();
+    	try {
+    		exists = Files.exists(Paths.get(settingDao.getSetting("tag.directory")
+			        + "/"
+			        + tagName
+			        + "/"
+			        + String.format("%04d", year)));
+    	} finally {
+    		rrwl.readLock().unlock();
+    	}
+    	return exists;
     }
     
     public boolean monthExists(String tagName, int year, int month) {
-    	return Files.exists(Paths.get(settingDao.getSetting("tag.directory")
-			    + "/"
-			    + tagName
-				+ "/"
-				+ String.format("%04d", year)
-				+ "/"
-				+ String.format("%02d", month)));
+    	boolean exists;
+    	rrwl.readLock().lock();
+    	try {
+    	    exists = Files.exists(Paths.get(settingDao.getSetting("tag.directory")
+			        + "/"
+			        + tagName
+				    + "/"
+				    + String.format("%04d", year)
+				    + "/"
+				    + String.format("%02d", month)));
+    	} finally {
+    		rrwl.readLock().unlock();
+    	}
+    	return exists;
     }
 	
 	public List<String> getTagNames() throws IOException {
     	List<String> names = new LinkedList<>();
 		Pattern pattern = Pattern.compile("/([^/]+)$");
-		try(DirectoryStream<Path> directoryStream
+		rrwl.readLock().lock();
+		try(DirectoryStream<Path> ds
 				= Files.newDirectoryStream(Paths.get(settingDao.getSetting("tag.directory")))) {
-			for(Path path : directoryStream) {
+			for(Path path : ds) {
 				Matcher matcher = pattern.matcher(path.toString()); 
 				if(matcher.find() && Files.isDirectory(path))
 					names.add(matcher.group(1));
 			}
+		} finally {
+			rrwl.readLock().unlock();
 		}
 		return names;
     }
     
     public List<String> getYears(String tagName) throws IOException {
 		List<String> years = new LinkedList<>();
-		Pattern pattern = Pattern.compile("/(\\d\\d\\d\\d)$");
-		try(DirectoryStream<Path> directoryStream
+		rrwl.readLock().lock();
+		try(DirectoryStream<Path> ds
 				= Files.newDirectoryStream(Paths.get(settingDao.getSetting("tag.directory")
 						+ "/"
 						+ tagName))) {
-			for(Path path : directoryStream) {
-				Matcher matcher = pattern.matcher(path.toString()); 
+			for(Path path : ds) {
+				Matcher matcher = tagYearPattern.matcher(path.toString()); 
 				if(matcher.find() && Files.isDirectory(path))
 					years.add(matcher.group(1));
 			}
+		} finally {
+			rrwl.readLock().unlock();
 		}
 		Collections.sort(years, new YearComparator());
 		return years;
@@ -116,8 +146,8 @@ public class TagDao {
     
     public List<String> getMonths(String tagName, int year) throws IOException {
 		List<String> months = new LinkedList<>();
-		Pattern pattern = Pattern.compile("/(\\d\\d)$");
-		try(DirectoryStream<Path> directoryStream
+		rrwl.readLock().lock();
+		try(DirectoryStream<Path> ds
 				= Files.newDirectoryStream(
 						Paths.get(settingDao.getSetting("tag.directory")
 								+ "/"
@@ -125,12 +155,13 @@ public class TagDao {
 								+ "/"
 								+ String.format("%04d", year)))) {
 			
-			for(Path path : directoryStream) {
-				Matcher matcher = pattern.matcher(path.toString()); 
+			for(Path path : ds) {
+				Matcher matcher = tagMonthPattern.matcher(path.toString()); 
 				if(matcher.find() && path.toFile().isDirectory())
 					months.add(matcher.group(1));
 			}
 		}
+		rrwl.readLock().unlock();
 		Collections.sort(months, new MonthComparator());
 		return months;
     }
@@ -138,61 +169,75 @@ public class TagDao {
 	public void createTagNameIndex()
 			throws IOException,
 			TemplateException {
+		
+		if(tagNameIndexTemplate == null)
+			tagNameIndexTemplate
+			= freeMarkerConfigurer.getConfiguration().getTemplate("tag_name_index.ftl");
+		
 		List<String> tagNames = getTagNames();
 		StringWriter temporaryBuffer = new StringWriter();
 		Map<String, Object> modelMap = new HashMap<>();
 		modelMap.put("settings", settingDao);
 		modelMap.put("tagNames", tagNames);
-		if(tagNameIndexTemplate == null)
-			tagNameIndexTemplate
-			= freeMarkerConfigurer.getConfiguration().getTemplate("tag_name_index.ftl");
+
 		tagNameIndexTemplate.process(modelMap, temporaryBuffer);
 		
 		Path tagNameIndexPath = Paths.get(settingDao.getSetting("tag.directory")
 				+ "/index.html");
+		rrwl.writeLock().lock();
 		Files.createDirectories(tagNameIndexPath.getParent());
-		
         try(BufferedWriter bufferedWriter
         		= new BufferedWriter(new FileWriter(tagNameIndexPath.toFile()))) {
             bufferedWriter.write(temporaryBuffer.toString());
+        } finally {
+        	rrwl.writeLock().unlock();
         }
 	}
 
 	public void createYearIndex(String tagName)
 			throws IOException,
 			TemplateException {
+		
+		if(yearIndexTemplate == null)
+			yearIndexTemplate
+			= freeMarkerConfigurer.getConfiguration().getTemplate("year_index.ftl");
+		
 		List<String> years = getYears(tagName);
 		StringWriter temporaryBuffer = new StringWriter();
 		Map<String, Object> modelMap = new HashMap<>();
 		modelMap.put("settings", settingDao);
 		modelMap.put("years", years);
-		if(yearIndexTemplate == null)
-			yearIndexTemplate
-			= freeMarkerConfigurer.getConfiguration().getTemplate("year_index.ftl");
+
 		yearIndexTemplate.process(modelMap, temporaryBuffer);
 		
 		Path yearIndexPath = Paths.get(settingDao.getSetting("tag.directory")
 				+ "/"
 				+ tagName
 				+ "/index.html");
-		Files.createDirectories(yearIndexPath.getParent());
 		
+		rrwl.writeLock().lock();
+		Files.createDirectories(yearIndexPath.getParent());
         try(BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(yearIndexPath.toFile()))) {
             bufferedWriter.write(temporaryBuffer.toString());
+        } finally {
+        	rrwl.writeLock().unlock();
         }
 	}
 	
 	public void createMonthIndex(String tagName, int year)
 			throws IOException,
 			TemplateException {
+		
+		if(monthIndexTemplate == null)
+			monthIndexTemplate =
+			freeMarkerConfigurer.getConfiguration().getTemplate("month_index.ftl");
+		
 		List<String> months = getMonths(tagName, year);
 		StringWriter temporaryBuffer = new StringWriter();
 		Map<String, Object> modelMap = new HashMap<>();
 		modelMap.put("settings", settingDao);
 		modelMap.put("months", months);
-		if(monthIndexTemplate == null)
-			monthIndexTemplate =
-			freeMarkerConfigurer.getConfiguration().getTemplate("month_index.ftl");
+
 		monthIndexTemplate.process(modelMap, temporaryBuffer);
 		
 		Path monthIndexPath = Paths.get(settingDao.getSetting("tag.directory")
@@ -201,11 +246,14 @@ public class TagDao {
 				+ "/"
 				+ String.format("%04d", year)
 				+ "/index.html");
-		Files.createDirectories(monthIndexPath.getParent());
 		
+		rrwl.writeLock().lock();
+		Files.createDirectories(monthIndexPath.getParent());
         try(BufferedWriter bufferedWriter
         		= new BufferedWriter(new FileWriter(monthIndexPath.toFile()))) {
             bufferedWriter.write(temporaryBuffer.toString());
+        } finally {
+        	rrwl.writeLock().unlock();
         }
 	}
 	
@@ -213,13 +261,16 @@ public class TagDao {
 			throws IOException,
 			InvalidTagNameException,
 			TemplateException {
+		
+		if(tagIndexTemplate == null)
+			tagIndexTemplate = freeMarkerConfigurer.getConfiguration().getTemplate("tag_index.ftl");
+		
 		List<TagDto> tags = getList(tagName, year, month);
 		StringWriter temporaryBuffer = new StringWriter();
 		Map<String, Object> modelMap = new HashMap<>();
 		modelMap.put("settings", settingDao);
 		modelMap.put("tags", tags);
-		if(tagIndexTemplate == null)
-			tagIndexTemplate = freeMarkerConfigurer.getConfiguration().getTemplate("tag_index.ftl");
+
 		tagIndexTemplate.process(modelMap, temporaryBuffer);
 		
 		Path postIndexPath = Paths.get(settingDao.getSetting("tag.directory")
@@ -230,27 +281,30 @@ public class TagDao {
 				+ "/"
 				+ String.format("%02d", month)
 				+ "/index.html");
+		rrwl.writeLock().lock();
 		Files.createDirectories(postIndexPath.getParent());
-		
         try(BufferedWriter bufferedWriter
         		= new BufferedWriter(new FileWriter(postIndexPath.toFile()))) {
             bufferedWriter.write(temporaryBuffer.toString());
+        } finally {
+        	rrwl.writeLock().unlock();
         }
 	}
 	
     public void create(TagDto tag) throws IOException {
     	Path tagPath = Paths.get(settingDao.getSetting("tag.directory") + tag.getLocalPath());
-    	
+    	rrwl.writeLock().lock();
     	Files.createDirectories(tagPath.getParent());
     	Files.createFile(tagPath);
+    	rrwl.writeLock().unlock();
     }
     
     public List<TagDto> getList(String tagName, int year, int month)
     		throws IOException,
     		InvalidTagNameException {
 		List<TagDto> tags = new LinkedList<>();
-		
-		try(DirectoryStream<Path> directoryStream
+		rrwl.readLock().lock();
+		try(DirectoryStream<Path> ds
 				= Files.newDirectoryStream(
 						Paths.get(settingDao.getSetting("tag.directory")
 					    + "/"
@@ -260,7 +314,7 @@ public class TagDao {
 						+ "/"
 						+ String.format("%02d", month)))) {
 			
-			for(Path path : directoryStream) {
+			for(Path path : ds) {
 				Matcher matcher = tagPathStringPattern.matcher(path.toString()); 
 				if(matcher.find())
 					tags.add(new TagDto().setName(matcher.group("name"))
@@ -271,6 +325,7 @@ public class TagDao {
 									matcher.group("secret").equals("s"))));
 			}
 		}
+		rrwl.readLock().unlock();
 		Collections.sort(tags, new TagDtoComparator());
 		return tags;
     }
@@ -278,6 +333,7 @@ public class TagDao {
     public void delete(TagDto tag) throws IOException {
     	Path tagPath = Paths.get(settingDao.getSetting("tag.directory") + tag.getLocalPath());
     	
+    	rrwl.writeLock().lock();
     	Files.delete(tagPath);
     	
     	FileUtils.rmdir(tagPath.getParent(), new DirectoryStream.Filter<Path>() {
@@ -290,7 +346,7 @@ public class TagDao {
     	FileUtils.rmdir(tagPath.getParent().getParent(), new DirectoryStream.Filter<Path>() {
 			@Override
 			public boolean accept(Path path) throws IOException {
-				return (! Pattern.compile("/\\d\\d$").matcher(path.toString()).find())
+				return (! tagMonthPattern.matcher(path.toString()).find())
 						|| (! Files.isDirectory(path));
 			}
     	});
@@ -298,9 +354,10 @@ public class TagDao {
     	FileUtils.rmdir(tagPath.getParent().getParent().getParent(), new DirectoryStream.Filter<Path>() {
 			@Override
 			public boolean accept(Path path) throws IOException {
-				return (! Pattern.compile("/\\d\\d\\d\\d$").matcher(path.toString()).find())
+				return (! tagYearPattern.matcher(path.toString()).find())
 						|| (! Files.isDirectory(path));
 			}	
     	});
+    	rrwl.writeLock().unlock();
     }
 }
