@@ -13,6 +13,13 @@
     table tbody tr:nth-child(even) {
     }
 </style>
+<script type="text/javascript">
+    document.addEventListener("click", function(event) {
+        if(event.target.innerHTML == "delete" && confirm("Do you really want to delete this post?") == false) {
+            event.preventDefault();
+        }
+    });
+</script>
 <table>
     <thead>
         <tr> 
@@ -60,11 +67,4 @@
     &nbsp;
     <a href="${nextPageLink}">next&gt;</a>
 </#if>
-<script type="text/javascript">
-    document.addEventListener("click", function(event) {
-        if(event.target.innerHTML == "delete" && confirm("Do you really want to delete this post?") == false) {
-            event.preventDefault();
-        }
-    });
-</script>
 <#include "footer.ftl"/>

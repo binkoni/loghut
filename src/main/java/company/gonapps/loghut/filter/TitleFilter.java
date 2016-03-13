@@ -13,7 +13,7 @@ public class TitleFilter implements Filter<PostDto> {
     }
 	
 	@Override
-	public boolean test(PostDto target) {
-		return titlePattern.matcher(target.getTitle()).find();
+	public boolean test(PostDto post) {
+		return titlePattern.matcher(post.getTitle()).find();
 	}
 }

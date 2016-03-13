@@ -19,20 +19,28 @@
         <a href="${settings.getSetting('admin.url')}/refresh_all.do">Refresh All Posts</a>
         <a href="${settings.getSetting('admin.url')}/logout.do">Logout</a>
         <hr>
-        <form action="${settings.getSetting('admin.url')}/search.do" method="get">
+        <script type="text/javascript">
+            document.addEventListener("change", function(event) {
+                if(event.target.id = "search_filter_select") {
+                    document
+                    .getElementById("search_filter")
+                    .setAttribute("name",
+                        event.target.options[event.target.selectedIndex].value); 
+                }
+            });
+        </script>
+        <form id="search_form" action="${settings.getSetting('admin.url')}/search.do" method="get">
             <input type="hidden" name="action" value="search"/>
-            <label for="title">Title</label>
-            <input type="text" name="title"/>
-            <div style="display:none">
-                <label for="tags">Tags</label>
-                <input type="text" name="tags"/>
-                <label for="years">Years</label>
-                <input type="text" name="years"/>
-                <label for="months">Months</label>
-                <input type="text" name="months"/>
-                <label for="days">Days</label>
-                <input type="text" name="days"/>
-            </div>
+            <select id="search_filter_select" form="search_form">
+                <option value="title">Title</option>
+                <option value="tag_names">TagNames</option>
+                <option value="years">Years</option>
+                <option value="months">Months</option>
+                <option value="months">Days</option>
+            </select>
+            
+            <input type="text" id="search_filter" name="title"/>
+            
             <input type="hidden" name="page_unit" value="10"/>
             <input type="hidden" name="page" value="1"/>
             <input type="submit" value="Search"/>
