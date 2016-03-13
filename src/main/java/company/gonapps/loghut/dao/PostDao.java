@@ -190,8 +190,7 @@ public class PostDao {
         post.setText(document.select("#loghut-post-text").first().html());
 	    List<TagDto> tags = new LinkedList<>();
 	    
-	    for(Element tagElement : document.select("#loghut-post-tags").first().children()) {
-	    	if(tagElement.text().matches("\\s*")) continue;
+	    for(Element tagElement : document.select(".loghut-post-tag")) {
 			tags.add(new TagDto().setName(tagElement.text()));
 	    }
 	    

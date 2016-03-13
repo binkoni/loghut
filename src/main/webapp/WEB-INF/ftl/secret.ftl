@@ -36,10 +36,10 @@
                     ${post.text}
                 </article>
                 <div class="panel-footer">
-                    <span id="loghut-post-tags">
+                    <span>
                         <strong>Tags:(</strong>
                         <#list post.tags as tag>
-                            <a class="label label-default" href="${settings.getSetting('tag.url')}${tag.path}">
+                            <a class="loghut-post-tag label label-default" href="${settings.getSetting('tag.url')}${tag.path}">
                                 ${tag.name}
                             </a>
                             &nbsp;
