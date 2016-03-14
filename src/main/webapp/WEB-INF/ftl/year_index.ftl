@@ -5,83 +5,78 @@
         <meta charset="utf-8"/>
         <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,user-scalable=yes"/>
         <link href="http://gonapps.io/res/favicon.gif" rel="shortcut icon" type="image/x-icon"/>
-        <link href="http://gonapps.io/res/responsive_grid_system.css" rel="stylesheet" type="text/css"/>
-        <link href="http://gonapps.io/blog/res/blog.css" rel="stylesheet" type="text/css"/>
         <script src="//code.jquery.com/jquery.min.js" type="text/javascript"></script>
-        <script src="http://gonapps.io/blog/js/blog.js" type="text/javascript"></script>
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+        <!-- Optional theme -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
     </head>
     <body>
-        <header>
-            <div id="header_blank" class="span12"></div>
-            <div id="menu"></div>
-            <div id="menu_button"></div>
-            <div id="blog_title" class="span12">
-                <div class="span5_center">
-                    <a href="http://gonapps.io/blog"><img src="http://gonapps.io/blog/res/blog_title.svg"/></a>
-                </div>
-                <hr class="red_hr"/>
-            </div>
-        </header>
-        
-        
-        <main>
-            <div class="span12 text_align">
-                <div class="span" style="width:50rem;border:0.5rem solid black;font-size:2rem">
-                    <p>
-                        <a href="..">..</a>
-                    </p>
-                </div>
-                <#list years as year>
-                    <div class="span" style="width:50rem;border:0.5rem solid black;font-size:2rem">
-                        <p>
-                            <a href="${year}">${year}</a>
-                        </p>
+        <div class="container">
+            <header class="page-header text-center">
+                <h1>
+                    <a href="http://gonapps.io/blog">Gon's Blog</a>
+                </h1>
+            </header>
+            <main>
+                <div class="list-group">
+                    <div class="list-group-item">
+                        <a href="..">
+                        ..
+                        </a>
                     </div>
-                </#list>
-            </div>
-        </main>
-        <footer>
-            <li id="profile" class="not_contained">
-                <div>Profile</div>
-                <img style="width:10rem" src="http://gonapps.io/res/wawa.jpg"/>
-                <p>Hello my name is ***</p>
-            </li>
-            <ul>
-                <li>
-                    <a href="http://gonapps.io/blog/admin">Admin</a>
-                </li>
-                <li>
-                    <a href="http://gonapps.io/blog/posts">Archive</a>
-                </li>
-                <li>
-                    <a href="http://gonapps.io/blog/tags">Tags</a>
-                </li>
-            </ul>
-            <hr class="yellow_hr"/>
-            <ul>
-                <li><a href="http://gonapps.io">Home</a></li>
-                <li><a href="http://gonapps.io/apps">Gon Apps</a></li>
-                <li><a href="https://kiwiirc.com/client/irc.freenode.net/#gonapps">IRC Chat</a></li>
-                <li><a href="http://gonapps.io/about.html">About</a></li>
-                <li>
-                    <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-                        <input type="hidden" name="cmd" value="_s-xclick"/>
-                        <input type="hidden" name="hosted_button_id" value="ZEJU5LY7WNVZ4"/>
-                        <input type="image" name="submit" alt="Donate with PayPal"/>
-                    </form>
-                </li>
-            </ul>
-            <div id="copyright" class="span12"></div>
-        </footer>
-    <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-      ga('create', 'UA-66175317-1', 'auto');
-      ga('send', 'pageview');
-
-    </script>
+                    <#list years as year>
+                    <div class="list-group-item">
+                        <a href="${year}">
+                        ${year}
+                        </a>
+                    </div>
+                    </#list>
+                </div>
+            </main>
+            <footer class="panel panel-default">
+                <ul class="nav nav-pills">
+                    <li>
+                        <a href="http://gonapps.io/blog/admin">
+                        <span class="glyphicon glyphicon-user"></span> Admin
+                        </a>
+                    </li>
+                    <li>
+                        <a href="http://gonapps.io/blog/posts">
+                        <span class="glyphicon glyphicon-folder-open"></span> Archive
+                        </a>
+                    </li>
+                    <li>
+                        <a href="http://gonapps.io/blog/tags">
+                        <span class="glyphicon glyphicon-tags"></span> Tags
+                        </a>
+                    </li>
+                </ul>
+                <ul class="nav nav-pills">
+                    <li>
+                        <a href="http://gonapps.io">
+                        <span class="glyphicon glyphicon-home"></span> Home
+                        </a>
+                    </li>
+                    <li>
+                        <a href="http://gonapps.io/apps">
+                        <span class="glyphicon glyphicon-th"></span> Gon Apps
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://kiwiirc.com/client/irc.freenode.net/#gonapps">
+                        <span class="glyphicon glyphicon-volume-up"></span> IRC Chat
+                        </a>
+                    </li>
+                    <li>
+                        <a href="http://gonapps.io/about.html">
+                        <span class="glyphicon glyphicon-info-sign"></span> About
+                        </a>
+                    </li>
+                </ul>
+            </footer>
+        </div>
     </body>
 </html>

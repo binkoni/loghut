@@ -37,13 +37,13 @@
                 </article>
                 <div class="panel-footer">
                     <span>
-                        <strong>Tags:(</strong>
-                        <#list post.tags as tag>
-                            <a class="loghut-post-tag label label-default" href="${settings.getSetting('tag.url')}${tag.path}">
-                                ${tag.name}
-                            </a>
-                            &nbsp;
-                        </#list>
+                    <strong>Tags:(</strong>
+                    <#list post.tags as tag>
+                    <a class="loghut-post-tag label label-default" href="${settings.getSetting('tag.url')}${tag.path}">
+                    ${tag.name}
+                    </a>
+                    &nbsp;
+                    </#list>
                     </span>
                     <strong>)</strong>
                     <div>
@@ -60,48 +60,45 @@
                 </div>
             </main>
             <footer class="panel panel-default">
-                <div class="panel-body">
-                    <ul class="nav nav-pills">
-                        <li>
-                            <a href="http://gonapps.io/blog/admin">
-                            <span class="glyphicon glyphicon-user"></span> Admin
-                            </a>
-                        </li>
-                        <li>
-                            <a href="http://gonapps.io/blog/posts">
-                            <span class="glyphicon glyphicon-folder-open"></span> Archive
-                            </a>
-                        </li>
-                        <li>
-                            <a href="http://gonapps.io/blog/tags">
-                            <span class="glyphicon glyphicon-tags"></span> Tags
-                            </a>
-                        </li>
-                    </ul>
-                    <hr/>
-                    <ul class="nav nav-pills">
-                        <li>
-                            <a href="http://gonapps.io">
-                            <span class="glyphicon glyphicon-home"></span> Home
-                            </a>
-                        </li>
-                        <li>
-                            <a href="http://gonapps.io/apps">
-                            <span class="glyphicon glyphicon-th"></span> Gon Apps
-                            </a>
-                        </li>
-                        <li>
-                            <a href="https://kiwiirc.com/client/irc.freenode.net/#gonapps">
-                            <span class="glyphicon glyphicon-volume-up"></span> IRC Chat
-                            </a>
-                        </li>
-                        <li>
-                            <a href="http://gonapps.io/about.html">
-                            <span class="glyphicon glyphicon-info-sign"></span> About
-                            </a>
-                        </li>
-                    </ul>
-                </div>
+                <ul class="nav nav-pills">
+                    <li>
+                        <a href="http://gonapps.io/blog/admin">
+                        <span class="glyphicon glyphicon-user"></span> Admin
+                        </a>
+                    </li>
+                    <li>
+                        <a href="http://gonapps.io/blog/posts">
+                        <span class="glyphicon glyphicon-folder-open"></span> Archive
+                        </a>
+                    </li>
+                    <li>
+                        <a href="http://gonapps.io/blog/tags">
+                        <span class="glyphicon glyphicon-tags"></span> Tags
+                        </a>
+                    </li>
+                </ul>
+                <ul class="nav nav-pills">
+                    <li>
+                        <a href="http://gonapps.io">
+                        <span class="glyphicon glyphicon-home"></span> Home
+                        </a>
+                    </li>
+                    <li>
+                        <a href="http://gonapps.io/apps">
+                        <span class="glyphicon glyphicon-th"></span> Gon Apps
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://kiwiirc.com/client/irc.freenode.net/#gonapps">
+                        <span class="glyphicon glyphicon-volume-up"></span> IRC Chat
+                        </a>
+                    </li>
+                    <li>
+                        <a href="http://gonapps.io/about.html">
+                        <span class="glyphicon glyphicon-info-sign"></span> About
+                        </a>
+                    </li>
+                </ul>
             </footer>
         </div>
     </body>
