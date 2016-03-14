@@ -192,6 +192,7 @@ public class PostService {
     public void modify(PostDto oldPostObject, PostDto newPost) throws Exception {
     	
     	postDao.delete(oldPostObject);
+    	postDao.deleteCompression(oldPostObject);
     	rrwl.readLock().lock();
     	PostDto oldPost = postCache.get(oldPostObject.getLocalPath());
     	rrwl.readLock().unlock();
@@ -248,6 +249,8 @@ public class PostService {
                 postDao.compressPostIndex(new Integer(year), new Integer(month));
 		    }
 		}
+		
+		tagService.refreshAll();
     }
     
     public void delete(PostDto postObject) throws Exception {

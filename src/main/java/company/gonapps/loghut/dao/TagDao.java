@@ -294,9 +294,12 @@ public class TagDao {
     public void create(TagDto tag) throws IOException {
     	Path tagPath = Paths.get(settingDao.getSetting("tag.directory") + tag.getLocalPath());
     	rrwl.writeLock().lock();
-    	Files.createDirectories(tagPath.getParent());
-    	Files.createFile(tagPath);
-    	rrwl.writeLock().unlock();
+    	try {
+    	    Files.createDirectories(tagPath.getParent());
+    	    Files.createFile(tagPath);
+    	} finally {
+    	    rrwl.writeLock().unlock();
+    	}
     }
     
     public List<TagDto> getList(String tagName, int year, int month)
@@ -324,40 +327,45 @@ public class TagDao {
 									Integer.parseInt(matcher.group("number")),
 									matcher.group("secret").equals("s"))));
 			}
+		} finally {
+		    rrwl.readLock().unlock();
 		}
-		rrwl.readLock().unlock();
 		Collections.sort(tags, new TagDtoComparator());
 		return tags;
     }
     
     public void delete(TagDto tag) throws IOException {
+    	
     	Path tagPath = Paths.get(settingDao.getSetting("tag.directory") + tag.getLocalPath());
     	
     	rrwl.writeLock().lock();
-    	Files.delete(tagPath);
+    	try {
+    	    Files.delete(tagPath);
     	
-    	FileUtils.rmdir(tagPath.getParent(), new DirectoryStream.Filter<Path>() {
-			@Override
-			public boolean accept(Path path) throws IOException {
-				return ! tagPathStringPattern.matcher(path.toString()).find();
-			}	
-    	});
-    	
-    	FileUtils.rmdir(tagPath.getParent().getParent(), new DirectoryStream.Filter<Path>() {
-			@Override
-			public boolean accept(Path path) throws IOException {
-				return (! tagMonthPattern.matcher(path.toString()).find())
-						|| (! Files.isDirectory(path));
-			}
-    	});
-    	
-    	FileUtils.rmdir(tagPath.getParent().getParent().getParent(), new DirectoryStream.Filter<Path>() {
-			@Override
-			public boolean accept(Path path) throws IOException {
-				return (! tagYearPattern.matcher(path.toString()).find())
-						|| (! Files.isDirectory(path));
-			}	
-    	});
-    	rrwl.writeLock().unlock();
+    	    FileUtils.rmdir(tagPath.getParent(), new DirectoryStream.Filter<Path>() {
+    	    	@Override
+    	    	public boolean accept(Path path) throws IOException {
+    	    		return ! tagPathStringPattern.matcher(path.toString()).find();
+    	    	}	
+    	    });
+    	    
+    	    FileUtils.rmdir(tagPath.getParent().getParent(), new DirectoryStream.Filter<Path>() {
+    	    	@Override
+    	    	public boolean accept(Path path) throws IOException {
+    	    		return (! tagMonthPattern.matcher(path.toString()).find())
+    	    				|| (! Files.isDirectory(path));
+    	    	}
+    	    });
+    	    
+    	    FileUtils.rmdir(tagPath.getParent().getParent().getParent(), new DirectoryStream.Filter<Path>() {
+    	    	@Override
+    	    	public boolean accept(Path path) throws IOException {
+    	    		return (! tagYearPattern.matcher(path.toString()).find())
+    	    				|| (! Files.isDirectory(path));
+    	    	}	
+    	    });
+    	} finally {
+    	    rrwl.writeLock().unlock();
+    	}
     }
 }
