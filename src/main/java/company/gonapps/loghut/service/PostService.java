@@ -190,13 +190,13 @@ public class PostService {
 	}
 	
     public void modify(PostDto oldPostObject, PostDto newPost) throws Exception {
-    	
-    	postDao.delete(oldPostObject);
-    	postDao.deleteCompression(oldPostObject);
     	rrwl.readLock().lock();
     	PostDto oldPost = postCache.get(oldPostObject.getLocalPath());
     	rrwl.readLock().unlock();
     	if(oldPost == null) oldPost = postDao.get(oldPostObject);
+    	
+    	postDao.delete(oldPostObject);
+    	postDao.deleteCompression(oldPostObject);
     	
     	rrwl.writeLock().lock();
     	postObjectCache = null;
