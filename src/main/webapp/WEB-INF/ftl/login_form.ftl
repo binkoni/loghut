@@ -1,18 +1,15 @@
 <#include "header.ftl"/>
-<form action="${settings.getSetting('admin.url')}/login.do" method="POST">
+<div class="row">
+<form class="form-group col-md-3" action="${settings.getSetting('admin.url')}/login.do" method="POST">
     <h2>Login Required</h2>
     <label for="id">ID</label>
-    <br/>
-    <input name="id" type="text"/>
-    <br/>
+    <input class="form-control" name="id" type="text"/>
     <label for="password">PASSWORD</label>
-    <br/>
-    <input name="password" type="password"/>
-    <br/>
-    <br/>    
+    <input class="form-control" name="password" type="password"/>    
     <#if requestPath??>
         <input type="hidden" name="request_path" value="${requestPath}"/>
     </#if>
-    <input value="Login" type="submit"/>
+    <input class="btn btn-default" value="Login" type="submit"/>
 </form>
+</div>
 <#include "footer.ftl"/>

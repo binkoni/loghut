@@ -15,14 +15,14 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
     </head>
     <body>
+        <script type="text/javascript">
+        document.addEventListener("click", function(event) {
+            if(event.target.id == "post-delete" && confirm("Do you really want to delete this post?") == false) {
+                event.preventDefault();
+            }
+        });
+        </script>
         <div class="container">
-            <script>
-                document.addEventListener("click", function(event) {
-                    if(event.target.innerHTML == "delete" && confirm("Do you really want to delete this post?") == false) {
-                        event.preventDefault();
-                    }
-                });
-            </script>
             <header class="page-header text-center">
                 <h1>
                     <a href="http://gonapps.io/blog">Gon's Blog</a>
@@ -48,13 +48,13 @@
                     <strong>)</strong>
                     <div>
                         <a class="btn btn-default" href="${settings.getSetting('admin.url')}/creation_form.do">
-                        <span class="glyphicon glyphicon-pencil"></span> create
+                            <span class="glyphicon glyphicon-pencil"></span> create
                         </a>
                         <a class="btn btn-default" href="${settings.getSetting('admin.url')}${post.modificationFormPath}">
-                        <span class="glyphicon glyphicon-erase"></span> modify
+                            <span class="glyphicon glyphicon-erase"></span> modify
                         </a>
-                        <a class="btn btn-default" href="${settings.getSetting('admin.url')}${post.deletePath}">
-                        <span class="glyphicon glyphicon-trash"></span> delete
+                        <a id="post-delete" class="btn btn-default" href="${settings.getSetting('admin.url')}${post.deletePath}">
+                            <span class="glyphicon glyphicon-trash"></span> delete
                         </a>
                     </div>
                 </div>
@@ -63,39 +63,39 @@
                 <ul class="nav nav-pills">
                     <li>
                         <a href="http://gonapps.io/blog/admin">
-                        <span class="glyphicon glyphicon-user"></span> Admin
+                            <span class="glyphicon glyphicon-user"></span> Admin
                         </a>
                     </li>
                     <li>
                         <a href="http://gonapps.io/blog/posts">
-                        <span class="glyphicon glyphicon-folder-open"></span> Archive
+                            <span class="glyphicon glyphicon-folder-open"></span> Archive
                         </a>
                     </li>
                     <li>
                         <a href="http://gonapps.io/blog/tags">
-                        <span class="glyphicon glyphicon-tags"></span> Tags
+                            <span class="glyphicon glyphicon-tags"></span> Tags
                         </a>
                     </li>
                 </ul>
                 <ul class="nav nav-pills">
                     <li>
                         <a href="http://gonapps.io">
-                        <span class="glyphicon glyphicon-home"></span> Home
+                            <span class="glyphicon glyphicon-home"></span> Home
                         </a>
                     </li>
                     <li>
                         <a href="http://gonapps.io/apps">
-                        <span class="glyphicon glyphicon-th"></span> Gon Apps
+                            <span class="glyphicon glyphicon-th"></span> Gon Apps
                         </a>
                     </li>
                     <li>
                         <a href="https://kiwiirc.com/client/irc.freenode.net/#gonapps">
-                        <span class="glyphicon glyphicon-volume-up"></span> IRC Chat
+                            <span class="glyphicon glyphicon-volume-up"></span> IRC Chat
                         </a>
                     </li>
                     <li>
                         <a href="http://gonapps.io/about.html">
-                        <span class="glyphicon glyphicon-info-sign"></span> About
+                            <span class="glyphicon glyphicon-info-sign"></span> About
                         </a>
                     </li>
                 </ul>

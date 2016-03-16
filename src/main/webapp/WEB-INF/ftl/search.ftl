@@ -15,12 +15,12 @@
 </style>
 <script type="text/javascript">
     document.addEventListener("click", function(event) {
-        if(event.target.innerHTML == "delete" && confirm("Do you really want to delete this post?") == false) {
+        if(event.target.id == "post-delete" && confirm("Do you really want to delete this post?") == false) {
             event.preventDefault();
         }
     });
 </script>
-<table>
+<table class="table table-striped table-hover">
     <thead>
         <tr> 
             <th>Title</th>
@@ -43,12 +43,12 @@
                 <br/>
                 (
                     <a href="${settings.getSetting('admin.url')}${post.modificationFormPath}">modify</a>
-                    <a href="${settings.getSetting('admin.url')}${post.deletePath}">delete</a>
+                    <a id="post-delete" href="${settings.getSetting('admin.url')}${post.deletePath}">delete</a>
                 )
             </td>
             <td>
                 <#list post.tags as tag>
-                    <a href="${settings.getSetting('tag.url')}${tag.path}">${tag.name}</a>
+                    <a class="label label-default" href="${settings.getSetting('tag.url')}${tag.path}">${tag.name}</a>
                 </#list>
             </td>
             <td>${post.year?c}</td>
@@ -58,13 +58,15 @@
         </#list>
     </tbody>
 </table>
+<ul class="pagination">
 <#if previousPageLink??>
-    <a href="${previousPageLink}">&lt;prev</a>
+    <li><a class="previous" href="${previousPageLink}">&lt;prev</a></li>
     &nbsp;
 </#if>
-[${currentPage}]
+<li><a>${currentPage}</a></li>
 <#if nextPageLink??>
     &nbsp;
-    <a href="${nextPageLink}">next&gt;</a>
+    <li><a class="next" href="${nextPageLink}">next&gt;</a></li>
 </#if>
+</ul>
 <#include "footer.ftl"/>
