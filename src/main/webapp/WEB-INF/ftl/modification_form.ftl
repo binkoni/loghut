@@ -1,4 +1,5 @@
 <#include "header.ftl"/>
+<#include "search_bar.ftl"/>
 <h1>Modify Post</h1>
 <form class="span10_center" action="${settings.getSetting('admin.url')}/modify.do" method="post">
     <input type="hidden" name="year" value="${post.year?c}"/>

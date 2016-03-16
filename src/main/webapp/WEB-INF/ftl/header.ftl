@@ -30,36 +30,4 @@
         <li><a href="${settings.getSetting('admin.url')}/logout.do">Logout</a></li>
         </ul>
         <hr>
-        <script type="text/javascript">
-            document.addEventListener("change", function(event) {
-                if(event.target.id = "search_filter_select") {
-                    document
-                    .getElementById("search_filter")
-                    .setAttribute("name",
-                        event.target.options[event.target.selectedIndex].value); 
-                }
-            });
-        </script>
-        <form id="search_form" class="form-group" class="" action="${settings.getSetting('admin.url')}/search.do" method="get">
-            <input type="hidden" name="action" value="search"/>
-            <input type="hidden" name="page_unit" value="10"/>
-            <input type="hidden" name="page" value="1"/>
-            <div class="row">
-                <div class="col-md-2"> 
-                    <select id="search_filter_select" class="form-control" form="search_form">
-                        <option value="title">Title</option>
-                        <option value="tag_names">TagNames</option>
-                        <option value="years">Years</option>
-                        <option value="months">Months</option>
-                        <option value="months">Days</option>
-                    </select>
-                </div>
-                <div class="col-md-5">
-                    <input id="search_filter" class="col-md-6 form-control" type="text" name="title"/>
-                </div>
-                <div class="col-md-5">
-                    <input class="btn btn-default" type="submit" value="Search"/>
-                </div>
-            </div>
-        </form>
-        <hr/>
+        

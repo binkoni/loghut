@@ -36,57 +36,50 @@ public class SearchController extends BaseController {
     public String search(ModelMap modelMap, HttpServletRequest request, 
     		int page_unit, int page) throws Exception {
 
-
     	Filters<PostDto> filters = new Filters<>();
     	
-    	String title = request.getParameter("title");
-    	if(title != null && ! title.equals("")) {
-    		filters.append(new TitleFilter(title));
-    	}
+    	String searchFilter = request.getParameter("search_filter");    	
+    	if(searchFilter == null) searchFilter = "";
+    	modelMap.put("searchFilter", searchFilter);
+
+    	String searchKeyword = request.getParameter("search_keyword");
+    	if(searchKeyword == null) searchKeyword = "";
+    	modelMap.put("searchKeyword", searchKeyword);;
     	
-    	String tag_namesString = request.getParameter("tag_names");
-    	if(tag_namesString != null && ! tag_namesString.equals("")) {
-    		List<String> tagNames = new LinkedList<>();
-        	for(String tagName : tag_namesString.split("\\s*,\\s*")) {
-        		if(tagName.matches("\\s*")) continue;
-        		tagNames.add(tagName);
-        	}
-        	filters.append(new TagsFilter(tagNames));
-    	}
-    	
-    	String text = request.getParameter("text");
-    	if(text != null && ! text.equals("")) {
-    		filters.append(new TextFilter(text));
-    	}
-    	
-    	String yearsString = request.getParameter("years");
-    	if(yearsString != null && ! yearsString.equals("")) {
-    		List<String> years = new LinkedList<>();
-        	for(String year : yearsString.split("\\s*,\\s*")) {
-        		if(year.matches("\\s*")) continue;
-        		years.add(year);
-        	}
-        	filters.append(new YearsFilter(years));
-    	}
-    	
-    	String monthsString = request.getParameter("months");
-    	if(monthsString != null && ! monthsString.equals("")) {
-    		List<String> months = new LinkedList<>();
-        	for(String month : monthsString.split("\\s*,\\s*")) {
-        		if(month.matches("\\s*")) continue;
-        		months.add(month);
-        	}
-        	filters.append(new MonthsFilter(months));
-    	}
-    	
-    	String daysString = request.getParameter("days");
-    	if(daysString != null && ! daysString.equals("")) {
-    		List<String> days = new LinkedList<>();
-        	for(String day : daysString.split("\\s*,\\s*")) {
-        		if(day.matches("\\s*")) continue;
-        		days.add(day);
-        	}
-        	filters.append(new DaysFilter(days));
+    	if(! searchKeyword.equals("")) {
+    	    if(searchFilter.equals("title")) {
+        		filters.append(new TitleFilter(searchKeyword));
+    	    } else if(searchFilter.equals("tag_names")) {
+        		List<String> tagNames = new LinkedList<>();
+        	    for(String tagName : searchKeyword.split("\\s*,\\s*")) {
+            		if(tagName.matches("\\s*")) continue;
+        		    tagNames.add(tagName);
+        	    }
+        	    filters.append(new TagsFilter(tagNames));
+    	    } else if(searchFilter.equals("text")) {
+        		filters.append(new TextFilter(searchKeyword));
+    	    } else if(searchFilter.equals("years")) {
+        		List<String> years = new LinkedList<>();
+        	    for(String year : searchKeyword.split("\\s*,\\s*")) {
+            		if(year.matches("\\s*")) continue;
+        		    years.add(year);
+        	    }
+        	    filters.append(new YearsFilter(years));
+    	    } else if(searchFilter.equals("months")) {
+        		List<String> months = new LinkedList<>();
+        	    for(String month : searchKeyword.split("\\s*,\\s*")) {
+        		    if(month.matches("\\s*")) continue;
+        		    months.add(month);
+        	    }
+        	    filters.append(new MonthsFilter(months));
+    	    } else if(searchFilter.equals("days")) {
+        		List<String> days = new LinkedList<>();
+        	    for(String day : searchKeyword.split("\\s*,\\s*")) {
+            		if(day.matches("\\s*")) continue;
+        		    days.add(day);
+        	    }
+        	    filters.append(new DaysFilter(days));
+    	    }
     	}
     	
     	SearchResult searchResult = postService.search(page_unit, page, filters);

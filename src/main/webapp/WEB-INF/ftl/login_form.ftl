@@ -1,4 +1,5 @@
 <#include "header.ftl"/>
+<#include "search_bar.ftl"/>
 <div class="row">
 <form class="form-group col-md-3" action="${settings.getSetting('admin.url')}/login.do" method="POST">
     <h2>Login Required</h2>

@@ -1,4 +1,5 @@
 <#include "header.ftl"/>
+<#include "search_bar.ftl"/>
 <h1>New Post</h1>
 <form class="span10_center" action="${settings.getSetting('admin.url')}/create.do" method="post">
     <label for="title">Title</label>
