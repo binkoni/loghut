@@ -28,7 +28,7 @@ And it's worse than C++ because you can explicitly delete the reference!<br/><br
 So in spite of being a script language and support of OOP, your web app development speed will be very slow and painful due to the memory management<br/><br/>
 Then I decided to rewrite LogHut with Java for fast performance, use Servlet, Spring, Freemarker for faster development.<br/>
 But this has also a problem. Because OpenJDK Java virtual machine was too slow and due to a lot of dependencies, the application became very slower.<br/><br/>
-Currently the performance is improved by caching and **you need to use JamVM rather than OpenJDK for more better performance**.<br/>
+Currently the performance is improved by caching and **you need to use JamVM rather than OpenJDK VM for more better performance**.<br/>
 With this improvements the performance of LogHut java version is almost fast as Perl version.<br/><br/>
 
 How to use
@@ -63,6 +63,7 @@ Software dependencies
 ---
 * Web server (nginx, apache, etc.)
 * Tomcat7
+* JRE >= 7
 
 Supported operating systems
 ---
