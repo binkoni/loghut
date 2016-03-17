@@ -6,7 +6,6 @@ You can run your blog even in Cubietruck or Raspberry Pi with no problems<br>
 You can customize your blog with Freemarker templates<br/>
 This project is still in development, you can also give some advice to the author to improve this application if you want.<br/>
 
-
 How it works
 --
 First, let me clarify the meaning of 'static'.<br/>
@@ -14,6 +13,23 @@ The word 'static' means that all posts you write will be saved as html files, no
 Being static, you can run your blog even in low-performance machines<br/>
 But 'static' doesn't mean that you should write posts, manage posts manually<br/>
 You can do the jobs very conveniently such as creating posts, modifying posts, deleting posts, managing tags, downloading the backup<br/>
+
+History of LogHut and A performance problem
+--
+When I was high school student I tried Naver blog, Google blog and Wordpress to run my own blog and make some money with Adsense.<br/>
+Actually none of them was satisfying, so I decided to create my own blog engine<br/>
+LogHut was initially written in Perl.<br/>
+I tried to make it lightweight and fast so that's why I choose Perl as the project language.<br/>
+And I also made my own modules from server to html parser rather than depending on CPAN modules which result in small dependencies and fast performance.<br/>
+Until I made first buglessly-working Perl version of LogHut I didn't notice the most worst characteristic of Perl<br/>
+The problem was reference-count based garbage collecter in Perl.<br/>
+Which means that if there is a circular reference then the part of memory will never be garbage collected.<br/>
+And it's worse than C++ because you can explicitly delete the reference!<br/>
+So in spite of being a script language and support of OOP, your web app development speed will be very slow and painful due to the memory management<br/>
+Then I decided to rewrite LogHut with Java for fast performance, use Servlet, Spring, Freemarker for faster development.<br/>
+But this has also a problem. Because OpenJDK Java virtual machine was too slow and due to a lot of dependencies, the application became very slower.<br/>
+Currently the performance is improved by caching and **you need to use JamVM rather than OpenJDK for more better performance**.<br/>
+With this improvements the performance of LogHut java version is almost fast as Perl version.<br/>
 
 How to use
 --
@@ -24,7 +40,6 @@ How to use
 Author
 ---
 Byeonggon Lee (gonny952@gmail.com)
-
 
 License
 ---
