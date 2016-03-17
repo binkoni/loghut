@@ -63,7 +63,7 @@ Software dependencies
 ---
 * Web server (nginx, apache, etc.)
 * Tomcat7
-* JRE >= 7
+* JRE version 7
 
 Supported operating systems
 ---
