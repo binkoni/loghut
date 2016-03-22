@@ -39,7 +39,7 @@ How to use
 3. Go to ${extractedDirectory}/WEB-INF/classes
 4. Edit settings.properties file
 5. Restart tomcat7
-(Visit gonapps.io/blog and see how it works)
+<br/>(Visit gonapps.io/blog and see how it works)
 
 settings.properties example
 --
