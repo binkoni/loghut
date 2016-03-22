@@ -34,9 +34,23 @@ With this improvements the performance of LogHut java version is almost fast as 
 
 How to use
 --
-1.
-2.
-3.
+1. Download .war file
+2. Move .war file into /var/lib/tomcat7/webapps/ and extract it (or it will be extracted automatically by Tomcat)
+3. Go to ${extractedDirectory}/WEB-INF/classes
+4. Edit settings.properties file
+
+settings.properties example
+--
+admin.id=foo<br/>
+admin.password=bar<br/>
+session.timeout=3600<br/>
+blog.url=http://gonapps.io/blog<br/>
+admin.url=http://gonapps.io/blog/admin<br/>
+post.url=http://gonapps.io/blog/posts<br/>
+tag.url=http://gonapps.io/blog/tags<br/>
+blog.directory=/mnt/web/blog<br/>
+post.directory=/mnt/web/blog/posts<br/>
+tag.directory=/mnt/web/blog/tags<br/>
 
 Author
 ---
