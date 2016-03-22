@@ -70,7 +70,7 @@
         <#list posts as post>
         <tr>
             <td>
-                <a href="<#if post.secretEnabled == true>${settings.getSetting('admin.url')}<#else>${settings.getSetting('post.url')}</#if>${post.path}">
+                <a href="<#if post.secretEnabled == true>${settings.getSetting('admin.url')}<#else>${settings.getSetting('posts.url')}</#if>${post.path}">
                     ${post.title}
                 </a>
                 <#if post.secretEnabled == true>
@@ -84,7 +84,7 @@
             </td>
             <td>
                 <#list post.tags as tag>
-                    <a class="label label-default" href="${settings.getSetting('tag.url')}${tag.path}">${tag.name}</a>
+                    <a class="label label-default" href="${settings.getSetting('tags.url')}${tag.path}">${tag.name}</a>
                 </#list>
             </td>
             <td>${post.year?c}</td>

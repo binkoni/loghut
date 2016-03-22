@@ -80,23 +80,23 @@ public class PostDao {
 	private ReentrantReadWriteLock rrwl = new ReentrantReadWriteLock();
 	
 	private String getPostPathString(PostDto post) {
-		return settingDao.getSetting("post.directory") + post.getLocalPath();
+		return settingDao.getSetting("posts.directory") + post.getLocalPath();
 	}
 	
 	private String getYearIndexPathString() {
-		return settingDao.getSetting("post.directory")
+		return settingDao.getSetting("posts.directory")
 		+ "/index.html";
 	}
 	
 	private String getMonthIndexPathString(int year) {
-		return settingDao.getSetting("post.directory")
+		return settingDao.getSetting("posts.directory")
 		+ "/"
 		+ String.format("%04d", year)
 		+ "/index.html";
 	}
 	
 	private String getPostIndexPathString(int year, int month) {
-		return settingDao.getSetting("post.directory")
+		return settingDao.getSetting("posts.directory")
 		+ "/" 
 		+ String.format("%04d", year)
 		+ "/" 
@@ -167,7 +167,7 @@ public class PostDao {
 		
 		rrwl.readLock().lock();
 		try {
-            for(String postPathString : FileUtils.scan(settingDao.getSetting("post.directory"))) {
+            for(String postPathString : FileUtils.scan(settingDao.getSetting("posts.directory"))) {
     			Matcher matcher = postPathStringPattern.matcher(postPathString);
 			    if(! matcher.find()) continue;
 			    postObjects.add(getPostObject(new Integer(matcher.group("year")),
@@ -227,7 +227,7 @@ public class PostDao {
 		rrwl.readLock().lock();
 		try(DirectoryStream<Path> ds
 				= Files.newDirectoryStream(
-						Paths.get(settingDao.getSetting("post.directory") 
+						Paths.get(settingDao.getSetting("posts.directory") 
 						+ "/"
 						+ String.format("%04d", year)
 						+ "/"
@@ -268,8 +268,8 @@ public class PostDao {
 		
 		filePaths.add(settingDao.getSetting("blog.directory") + "/index.html");
 		filePaths.add(settingDao.getSetting("blog.directory") + "/index.html.gz");
-		filePaths.add(settingDao.getSetting("post.directory"));
-		filePaths.add(settingDao.getSetting("tag.directory"));
+		filePaths.add(settingDao.getSetting("posts.directory"));
+		filePaths.add(settingDao.getSetting("tags.directory"));
 		
 		rrwl.writeLock().lock();
         try(GzipCompressorOutputStream gcos
@@ -321,7 +321,7 @@ public class PostDao {
 		rrwl.readLock().lock();
 		boolean exists; 
 		try {
-		    exists = Files.exists(Paths.get(settingDao.getSetting("post.directory") 
+		    exists = Files.exists(Paths.get(settingDao.getSetting("posts.directory") 
 				    + "/"
 				    + String.format("%04d", year)));
 		} finally {
@@ -334,7 +334,7 @@ public class PostDao {
 		boolean exists;
 		rrwl.readLock().lock();
 		try {
-		    exists = Files.exists(Paths.get(settingDao.getSetting("post.directory") 
+		    exists = Files.exists(Paths.get(settingDao.getSetting("posts.directory") 
 				    + "/"
 				    + String.format("%04d", year)
 				    + "/"
@@ -350,7 +350,7 @@ public class PostDao {
 		
 		rrwl.readLock().lock();
 		try(DirectoryStream<Path> ds
-				= Files.newDirectoryStream(Paths.get(settingDao.getSetting("post.directory")))) {
+				= Files.newDirectoryStream(Paths.get(settingDao.getSetting("posts.directory")))) {
 			for(Path path : ds) {
 				Matcher matcher = postYearPattern.matcher(path.toString()); 
 				if(matcher.find() && Files.isDirectory(path))
@@ -370,7 +370,7 @@ public class PostDao {
 		rrwl.readLock().lock();
 		try(DirectoryStream<Path> ds
 				= Files.newDirectoryStream(
-						Paths.get(settingDao.getSetting("post.directory") 
+						Paths.get(settingDao.getSetting("posts.directory") 
 						+ "/"
 						+ String.format("%04d", year)))) {
 			

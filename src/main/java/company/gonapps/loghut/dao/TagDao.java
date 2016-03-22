@@ -81,7 +81,7 @@ public class TagDao {
     	boolean exists;
     	rrwl.readLock().lock();
     	try {
-    		exists = Files.exists(Paths.get(settingDao.getSetting("tag.directory")
+    		exists = Files.exists(Paths.get(settingDao.getSetting("tags.directory")
     				+ "/"
     				+ tagName));
     	} finally {
@@ -94,7 +94,7 @@ public class TagDao {
     	boolean exists;
     	rrwl.readLock().lock();
     	try {
-    		exists = Files.exists(Paths.get(settingDao.getSetting("tag.directory")
+    		exists = Files.exists(Paths.get(settingDao.getSetting("tags.directory")
 			        + "/"
 			        + tagName
 			        + "/"
@@ -109,7 +109,7 @@ public class TagDao {
     	boolean exists;
     	rrwl.readLock().lock();
     	try {
-    	    exists = Files.exists(Paths.get(settingDao.getSetting("tag.directory")
+    	    exists = Files.exists(Paths.get(settingDao.getSetting("tags.directory")
 			        + "/"
 			        + tagName
 				    + "/"
@@ -127,7 +127,7 @@ public class TagDao {
 		Pattern pattern = Pattern.compile("/([^/]+)$");
 		rrwl.readLock().lock();
 		try(DirectoryStream<Path> ds
-				= Files.newDirectoryStream(Paths.get(settingDao.getSetting("tag.directory")))) {
+				= Files.newDirectoryStream(Paths.get(settingDao.getSetting("tags.directory")))) {
 			for(Path path : ds) {
 				Matcher matcher = pattern.matcher(path.toString()); 
 				if(matcher.find() && Files.isDirectory(path))
@@ -143,7 +143,7 @@ public class TagDao {
 		List<String> years = new LinkedList<>();
 		rrwl.readLock().lock();
 		try(DirectoryStream<Path> ds
-				= Files.newDirectoryStream(Paths.get(settingDao.getSetting("tag.directory")
+				= Files.newDirectoryStream(Paths.get(settingDao.getSetting("tags.directory")
 						+ "/"
 						+ tagName))) {
 			for(Path path : ds) {
@@ -164,7 +164,7 @@ public class TagDao {
 		rrwl.readLock().lock();
 		try(DirectoryStream<Path> ds
 				= Files.newDirectoryStream(
-						Paths.get(settingDao.getSetting("tag.directory")
+						Paths.get(settingDao.getSetting("tags.directory")
 								+ "/"
 								+ tagName
 								+ "/"
@@ -197,7 +197,7 @@ public class TagDao {
 
 		tagNameIndexTemplate.process(modelMap, temporaryBuffer);
 		
-		Path tagNameIndexPath = Paths.get(settingDao.getSetting("tag.directory")
+		Path tagNameIndexPath = Paths.get(settingDao.getSetting("tags.directory")
 				+ "/index.html");
 		rrwl.writeLock().lock();
 		Files.createDirectories(tagNameIndexPath.getParent());
@@ -225,7 +225,7 @@ public class TagDao {
 
 		yearIndexTemplate.process(modelMap, temporaryBuffer);
 		
-		Path yearIndexPath = Paths.get(settingDao.getSetting("tag.directory")
+		Path yearIndexPath = Paths.get(settingDao.getSetting("tags.directory")
 				+ "/"
 				+ tagName
 				+ "/index.html");
@@ -255,7 +255,7 @@ public class TagDao {
 
 		monthIndexTemplate.process(modelMap, temporaryBuffer);
 		
-		Path monthIndexPath = Paths.get(settingDao.getSetting("tag.directory")
+		Path monthIndexPath = Paths.get(settingDao.getSetting("tags.directory")
 				+"/"
 				+ tagName
 				+ "/"
@@ -288,7 +288,7 @@ public class TagDao {
 
 		tagIndexTemplate.process(modelMap, temporaryBuffer);
 		
-		Path postIndexPath = Paths.get(settingDao.getSetting("tag.directory")
+		Path postIndexPath = Paths.get(settingDao.getSetting("tags.directory")
 				+ "/"
 				+ tagName
 				+ "/" 
@@ -307,7 +307,7 @@ public class TagDao {
 	}
 	
     public void create(TagDto tag) throws IOException {
-    	Path tagPath = Paths.get(settingDao.getSetting("tag.directory") + tag.getLocalPath());
+    	Path tagPath = Paths.get(settingDao.getSetting("tags.directory") + tag.getLocalPath());
     	rrwl.writeLock().lock();
     	try {
     	    Files.createDirectories(tagPath.getParent());
@@ -324,7 +324,7 @@ public class TagDao {
 		rrwl.readLock().lock();
 		try(DirectoryStream<Path> ds
 				= Files.newDirectoryStream(
-						Paths.get(settingDao.getSetting("tag.directory")
+						Paths.get(settingDao.getSetting("tags.directory")
 					    + "/"
 					    + tagName
 						+ "/"
@@ -351,7 +351,7 @@ public class TagDao {
     
     public void delete(TagDto tag) throws IOException {
     	
-    	Path tagPath = Paths.get(settingDao.getSetting("tag.directory") + tag.getLocalPath());
+    	Path tagPath = Paths.get(settingDao.getSetting("tags.directory") + tag.getLocalPath());
     	
     	rrwl.writeLock().lock();
     	try {

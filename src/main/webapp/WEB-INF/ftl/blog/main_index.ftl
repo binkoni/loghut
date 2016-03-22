@@ -33,7 +33,7 @@
             </script>
             <header class="page-header text-center">
                 <h1>
-                    <a href="http://gonapps.io/blog">Gon's Blog</a>
+                    <a href="${settings.getSetting('blog.url')}">Gon's Blog</a>
                 </h1>
             </header>
             <main class="panel panel-default">
@@ -47,7 +47,7 @@
                     <span>
                     <strong>Tags:(</strong>
                     <#list post.tags as tag>
-                    <a class="loghut-post-tag label label-default" href="${settings.getSetting('tag.url')}${tag.path}">
+                    <a class="loghut-post-tag label label-default" href="${settings.getSetting('tags.url')}${tag.path}">
                     ${tag.name}
                     </a>
                     &nbsp;
@@ -70,24 +70,24 @@
             <footer class="panel panel-default">
                 <ul class="nav nav-pills">
                     <li>
-                        <a href="http://gonapps.io/blog/admin">
+                        <a href="${settings.getSetting('admin.url')}">
                             <span class="glyphicon glyphicon-user"></span> Admin
                         </a>
                     </li>
                     <li>
-                        <a href="http://gonapps.io/blog/posts">
+                        <a href="${settings.getSetting('posts.url')}">
                             <span class="glyphicon glyphicon-folder-open"></span> Archive
                         </a>
                     </li>
                     <li>
-                        <a href="http://gonapps.io/blog/tags">
+                        <a href="${settings.getSetting('tags.url')}">
                             <span class="glyphicon glyphicon-tags"></span> Tags
                         </a>
                     </li>
                 </ul>
                 <ul class="nav nav-pills">
                     <li>
-                        <a href="http://gonapps.io">
+                        <a href="${settings.getSetting('blog.url')}">
                             <span class="glyphicon glyphicon-home"></span> Home
                         </a>
                     </li>

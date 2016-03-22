@@ -18,7 +18,7 @@
         <div class="container">
             <header class="page-header text-center">
                 <h1>
-                    <a href="http://gonapps.io/blog">Gon's Blog</a>
+                    <a href="${settings.getSetting('blog.url')}">Gon's Blog</a>
                 </h1>
             </header>
             <main>
@@ -30,7 +30,7 @@
                     </div>
                     <#list tagNames as tagName>
                     <div class="list-group-item">
-                        <a href="${settings.getSetting('tag.url')}/${tagName}">
+                        <a href="${settings.getSetting('tags.url')}/${tagName}">
                         ${tagName}
                         </a>
                     </div>
@@ -40,24 +40,24 @@
             <footer class="panel panel-default">
                 <ul class="nav nav-pills">
                     <li>
-                        <a href="http://gonapps.io/blog/admin">
+                        <a href="${settings.getSetting('admin.url')}">
                         <span class="glyphicon glyphicon-user"></span> Admin
                         </a>
                     </li>
                     <li>
-                        <a href="http://gonapps.io/blog/posts">
+                        <a href="${settings.getSetting('posts.url')}">
                         <span class="glyphicon glyphicon-folder-open"></span> Archive
                         </a>
                     </li>
                     <li>
-                        <a href="http://gonapps.io/blog/tags">
+                        <a href="${settings.getSetting('tags.url')}">
                         <span class="glyphicon glyphicon-tags"></span> Tags
                         </a>
                     </li>
                 </ul>
                 <ul class="nav nav-pills">
                     <li>
-                        <a href="http://gonapps.io">
+                        <a href="${settings.getSetting('blog.url')}">
                         <span class="glyphicon glyphicon-home"></span> Home
                         </a>
                     </li>

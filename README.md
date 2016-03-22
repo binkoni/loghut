@@ -48,11 +48,11 @@ admin.password=bar<br/>
 session.timeout=3600<br/>
 blog.url=http://gonapps.io/blog<br/>
 admin.url=http://gonapps.io/blog/admin<br/>
-post.url=http://gonapps.io/blog/posts<br/>
-tag.url=http://gonapps.io/blog/tags<br/>
+posts.url=http://gonapps.io/blog/posts<br/>
+tags.url=http://gonapps.io/blog/tags<br/>
 blog.directory=/mnt/web/blog<br/>
-post.directory=/mnt/web/blog/posts<br/>
-tag.directory=/mnt/web/blog/tags<br/>
+posts.directory=/mnt/web/blog/posts<br/>
+tags.directory=/mnt/web/blog/tags<br/>
 
 Author
 ---
