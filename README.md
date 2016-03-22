@@ -44,20 +44,6 @@ How to use
 8. Configure nginx properly
 <br/>(Visit gonapps.io/blog and see how it works)
 
-nginx /etc/nginx/sites-enabled/default example
---
-    location ~ /blog/admin/ {
-        rewrite ^/blog/admin/(.*)$ /loghut/$1 break;
-        proxy_pass http://127.0.0.1:8080;
-        proxy_cookie_path /loghut /blog/admin;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    }
-
-
-
-
 settings.properties example
 --
 admin.id=foo<br/>
@@ -70,6 +56,17 @@ tags.url=http://gonapps.io/blog/tags<br/>
 blog.directory=/mnt/web/blog<br/>
 posts.directory=/mnt/web/blog/posts<br/>
 tags.directory=/mnt/web/blog/tags<br/>
+
+nginx /etc/nginx/sites-enabled/default example
+--
+    location ~ /blog/admin/ {
+        rewrite ^/blog/admin/(.*)$ /loghut/$1 break;
+        proxy_pass http://127.0.0.1:8080;
+        proxy_cookie_path /loghut /blog/admin;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
 
 Author
 ---
