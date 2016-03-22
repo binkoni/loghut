@@ -58,6 +58,6 @@ public class CreateController extends BaseController {
         
         modelMap.put("post", post);
     	
-        return "create";
+        return "admin/create";
     }
 }

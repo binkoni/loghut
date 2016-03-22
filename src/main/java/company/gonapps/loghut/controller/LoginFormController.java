@@ -29,7 +29,7 @@ public class LoginFormController extends BaseController {
 	public String loginForm(HttpServletRequest request) throws Exception {
 		HttpSession session = request.getSession(false);
 		if(session == null) {
-		    return "login_form";
+		    return "admin/login_form";
 		}
 		return "redirect:" + getSettingDao().getSetting("admin.url") + "/index.do";
 	}

@@ -25,6 +25,6 @@ public class IndexController extends BaseController {
 	
     @RequestMapping(value = "/index.do", method = RequestMethod.GET)
     public String index(ModelMap modelMap) {
-    	return "index";
+    	return "admin/index";
     }
 }

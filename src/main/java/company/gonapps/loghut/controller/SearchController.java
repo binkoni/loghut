@@ -111,6 +111,6 @@ public class SearchController extends BaseController {
     			+ "/search.do?"
     	    	+ request.getQueryString().replaceFirst("page=\\d+", "page=" + (page + 1)));
     	
-    	return "search";
+    	return "admin/search";
     }
 }

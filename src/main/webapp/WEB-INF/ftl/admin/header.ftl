@@ -1,4 +1,3 @@
-
 <html lang="en-US">
     <head>
         <title>Admin Page</title>

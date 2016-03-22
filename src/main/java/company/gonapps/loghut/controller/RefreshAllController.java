@@ -36,6 +36,6 @@ public class RefreshAllController extends BaseController {
 	@RequestMapping(value = "/refresh_all.do", method = RequestMethod.GET)
     public String refreshAll(ModelMap modelMap) throws Exception {
 		postService.refreshAll();
-        return "refresh_all";
+        return "admin/refresh_all";
     }
 }

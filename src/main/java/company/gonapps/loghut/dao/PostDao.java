@@ -121,7 +121,7 @@ public class PostDao {
 	public void create(PostDto post) throws IOException, TemplateException {
 		if(postTemplate == null)
 			postTemplate
-			= freeMarkerConfigurer.getConfiguration().getTemplate("post.ftl");
+			= freeMarkerConfigurer.getConfiguration().getTemplate("blog/post.ftl");
 		
 		StringWriter temporaryBuffer = new StringWriter();
 		Map<String, Object> modelMap = new HashMap<>();
@@ -395,7 +395,7 @@ public class PostDao {
 	        TemplateException {
 		
 		if(yearIndexTemplate == null) yearIndexTemplate
-		= freeMarkerConfigurer.getConfiguration().getTemplate("year_index.ftl");
+		= freeMarkerConfigurer.getConfiguration().getTemplate("blog/year_index.ftl");
 		
 		List<String> years = getYears();
 		StringWriter temporaryBuffer = new StringWriter();
@@ -434,7 +434,7 @@ public class PostDao {
 		
 		if(monthIndexTemplate == null)
 			monthIndexTemplate
-			= freeMarkerConfigurer.getConfiguration().getTemplate("month_index.ftl");
+			= freeMarkerConfigurer.getConfiguration().getTemplate("blog/month_index.ftl");
 		
 		List<String> months = getMonths(year);
 		StringWriter temporaryBuffer = new StringWriter();
@@ -475,7 +475,7 @@ public class PostDao {
 		
 		if(postIndexTemplate == null)
 			postIndexTemplate
-			= freeMarkerConfigurer.getConfiguration().getTemplate("post_index.ftl");
+			= freeMarkerConfigurer.getConfiguration().getTemplate("blog/post_index.ftl");
 		
 		List<PostDto> posts = getList(year, month);
 		
@@ -512,7 +512,7 @@ public class PostDao {
 	public void createMainIndex(PostDto post) throws IOException, TemplateException {
 		
 		if(mainIndexTemplate == null) mainIndexTemplate 
-		= freeMarkerConfigurer.getConfiguration().getTemplate("main_index.ftl");
+		= freeMarkerConfigurer.getConfiguration().getTemplate("blog/main_index.ftl");
 		
 		StringWriter temporaryBuffer = new StringWriter();
 		Map<String, Object> modelMap = new HashMap<>();

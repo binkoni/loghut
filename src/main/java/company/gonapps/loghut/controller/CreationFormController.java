@@ -25,6 +25,6 @@ public class CreationFormController extends BaseController {
 	
 	@RequestMapping(value = "/creation_form.do", method = RequestMethod.GET)
 	public String creationForm(ModelMap modelMap) {
-		return "creation_form";
+		return "admin/creation_form";
 	}
 }

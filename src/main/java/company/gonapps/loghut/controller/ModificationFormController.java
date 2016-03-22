@@ -41,6 +41,6 @@ public class ModificationFormController extends BaseController {
     		boolean secret_enabled) throws Exception {
 		
 		modelMap.put("post", postService.get(year, month, day, number, secret_enabled));
-	    return "modification_form";
+	    return "admin/modification_form";
 	}
 }

@@ -36,6 +36,6 @@ public class SecretController extends BaseController {
     public String secret(ModelMap modelMap, int year, int month, int day, int number) throws Exception {
     	
         modelMap.put("post", postService.get(year, month, day, number, true));
-    	return "secret";
+    	return "blog/secret";
     }
 }

@@ -78,6 +78,6 @@ public class ModifyController extends BaseController {
         
         modelMap.put("post", newPost);
     	
-        return "modify";
+        return "admin/modify";
     }
 }

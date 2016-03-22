@@ -187,7 +187,7 @@ public class TagDao {
 		
 		if(tagNameIndexTemplate == null)
 			tagNameIndexTemplate
-			= freeMarkerConfigurer.getConfiguration().getTemplate("tag_name_index.ftl");
+			= freeMarkerConfigurer.getConfiguration().getTemplate("blog/tag_name_index.ftl");
 		
 		List<String> tagNames = getTagNames();
 		StringWriter temporaryBuffer = new StringWriter();
@@ -215,7 +215,7 @@ public class TagDao {
 		
 		if(yearIndexTemplate == null)
 			yearIndexTemplate
-			= freeMarkerConfigurer.getConfiguration().getTemplate("year_index.ftl");
+			= freeMarkerConfigurer.getConfiguration().getTemplate("blog/year_index.ftl");
 		
 		List<String> years = getYears(tagName);
 		StringWriter temporaryBuffer = new StringWriter();
@@ -245,7 +245,7 @@ public class TagDao {
 		
 		if(monthIndexTemplate == null)
 			monthIndexTemplate =
-			freeMarkerConfigurer.getConfiguration().getTemplate("month_index.ftl");
+			freeMarkerConfigurer.getConfiguration().getTemplate("blog/month_index.ftl");
 		
 		List<String> months = getMonths(tagName, year);
 		StringWriter temporaryBuffer = new StringWriter();
@@ -278,7 +278,7 @@ public class TagDao {
 			TemplateException {
 		
 		if(tagIndexTemplate == null)
-			tagIndexTemplate = freeMarkerConfigurer.getConfiguration().getTemplate("tag_index.ftl");
+			tagIndexTemplate = freeMarkerConfigurer.getConfiguration().getTemplate("blog/tag_index.ftl");
 		
 		List<TagDto> tags = getList(tagName, year, month);
 		StringWriter temporaryBuffer = new StringWriter();

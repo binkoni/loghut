@@ -52,6 +52,6 @@ public class DeleteController extends BaseController {
     	
     	postService.delete(post);
     	
-    	return "delete";
+    	return "admin/delete";
     }
 }
