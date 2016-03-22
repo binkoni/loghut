@@ -38,7 +38,9 @@ How to use
 2. Move .war file into /var/lib/tomcat7/webapps/ and extract it (or it will be extracted automatically by Tomcat)
 3. Go to ${extractedDirectory}/WEB-INF/classes
 4. Edit settings.properties file
-5. Restart tomcat7
+5. Go to ${extractedDirectory}/WEB-INF/ftl/blog
+6. Edit *.ftl files to customize your blog design
+7. Restart tomcat7
 <br/>(Visit gonapps.io/blog and see how it works)
 
 settings.properties example
