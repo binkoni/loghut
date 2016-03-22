@@ -35,20 +35,6 @@
 </form>
 
 <hr/>
-<style type="text/css">  
-    table {
-         width:100%;
-         border-collapse:collapse;
-    }
-    table th, table td {
-        border:1px solid black;
-    }
-    table thead {
-        background-color:#CCCCCC;
-    }
-    table tbody tr:nth-child(even) {
-    }
-</style>
 <script type="text/javascript">
     document.addEventListener("click", function(event) {
         if(event.target.id == "post-delete" && confirm("Do you really want to delete this post?") == false) {
@@ -56,7 +42,7 @@
         }
     });
 </script>
-<table class="table table-striped table-hover">
+<table class="table table-striped table-hover table-bordered">
     <thead>
         <tr> 
             <th>Title</th>
