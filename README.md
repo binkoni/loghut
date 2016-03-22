@@ -41,7 +41,22 @@ How to use
 5. Go to ${extractedDirectory}/WEB-INF/ftl/blog
 6. Edit *.ftl files to customize your blog design
 7. Restart tomcat7
+8. Configure nginx properly
 <br/>(Visit gonapps.io/blog and see how it works)
+
+nginx /etc/nginx/sites-enabled/default example
+--
+    location ~ /blog/admin/ {
+        rewrite ^/blog/admin/(.*)$ /loghut/$1 break;
+        proxy_pass http://127.0.0.1:8080;
+        proxy_cookie_path /loghut /blog/admin;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+
+
 
 settings.properties example
 --
