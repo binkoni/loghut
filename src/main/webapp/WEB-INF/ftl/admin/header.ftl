@@ -22,6 +22,23 @@
                 <a href="${settings.getSetting('admin.url')}">Admin Page</a>
             </h1>
         </div>
+        <marquee id="loghut-ad-text"></marquee>
+        <script>
+        (function() {
+            try {
+                var xhr = new XMLHttpRequest();
+                xhr.onreadystatechange = function() {
+                    if(xhr.readyState == XMLHttpRequest.DONE) {
+                        ad = JSON.parse(xhr.responseText);
+                        var adText = document.getElementById("loghut-ad-text");
+                        adText.innerHTML = "<a href=\"" + ad.link + "\">" + ad.text + "</a>";
+                    }
+                };
+                xhr.open("GET", "http://gonapps.io/ad/loghut.ad", true);
+                xhr.send();
+            } catch(err) {}
+        })();
+        </script>
         <ul class="nav nav-pills">
         <li><a href="${settings.getSetting('blog.url')}">Blog Home</a></li>
         <li><a href="${settings.getSetting('admin.url')}/creation_form.do">New Post</a></li>
