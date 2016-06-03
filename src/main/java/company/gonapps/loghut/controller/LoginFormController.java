@@ -31,6 +31,6 @@ public class LoginFormController extends BaseController {
 		if(session == null) {
 		    return "admin/login_form";
 		}
-		return "redirect:" + getSettingDao().getSetting("admin.url") + "/index.do";
+		return "redirect:" + request.getScheme() + "://" + request.getServerName() + getSettingDao().getSetting("admin.url") + "/index.do";
 	}
 }

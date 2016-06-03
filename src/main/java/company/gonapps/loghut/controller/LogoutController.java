@@ -27,6 +27,6 @@ public class LogoutController extends BaseController {
 	@RequestMapping(value = "/logout.do", method = RequestMethod.GET)
 	public String logout(HttpServletRequest request) throws Exception {
 		request.getSession(false).invalidate();
-		return "redirect:" + getSettingDao().getSetting("admin.url") + "/login_form.do";
+		return "redirect:" + request.getScheme() + "://" + request.getServerName() + getSettingDao().getSetting("admin.url") + "/login_form.do";
 	}
 }

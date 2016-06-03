@@ -32,10 +32,9 @@ public class LoginController extends BaseController {
 			
 		    request.getSession().setMaxInactiveInterval(new Integer(getSettingDao().getSetting("session.timeout")));
 		    if(request_path != null)
-		        return "redirect:" + getSettingDao().getSetting("admin.url") + request_path;
-		    return "redirect:" + getSettingDao().getSetting("admin.url");
-		    
+		        return "redirect:" + request.getScheme() + "://" + request.getServerName() + getSettingDao().getSetting("admin.url") + request_path;
+		    return "redirect:" + request.getScheme() + "://" + request.getServerName() + getSettingDao().getSetting("admin.url");
 		} 
-		return "redirect:" + getSettingDao().getSetting("admin.url") + "/login_form.do";		
+		return "redirect:" + request.getScheme() + "://" + request.getServerName() + getSettingDao().getSetting("admin.url") + "/login_form.do";		
 	}
 }
