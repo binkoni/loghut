@@ -49,10 +49,10 @@ settings.properties example
 admin.id=foo<br/>
 admin.password=bar<br/>
 session.timeout=3600<br/>
-blog.url=http://gonapps.io/blog<br/>
-admin.url=http://gonapps.io/blog/admin<br/>
-posts.url=http://gonapps.io/blog/posts<br/>
-tags.url=http://gonapps.io/blog/tags<br/>
+blog.url=/blog<br/>
+admin.url=/blog/admin<br/>
+posts.url=/blog/posts<br/>
+tags.url=/blog/tags<br/>
 blog.directory=/mnt/web/blog<br/>
 posts.directory=/mnt/web/blog/posts<br/>
 tags.directory=/mnt/web/blog/tags<br/>
