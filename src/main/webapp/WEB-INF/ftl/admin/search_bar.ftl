@@ -1,13 +1,3 @@
-<script type="text/javascript">
-    document.addEventListener("change", function(event) {
-        if(event.target.id = "search-filter-select") {
-            document
-            .getElementById("search_filter")
-            .setAttribute("value",
-                event.target.options[event.target.selectedIndex].value); 
-        }
-    });
-</script>
 <form id="search-form" class="form-group" class="" action="${settings.getSetting('admin.url')}/search.do" method="get">
     <input type="hidden" name="action" value="search"/>
     <input type="hidden" name="page_unit" value="10"/>
@@ -23,6 +13,13 @@
                 <option value="days">Days</option>
             </select>
             <input id="search_filter" type="hidden" name="search_filter" value="title"/>
+            <script>
+                document.getElementById("search-filter-select").addEventListener("change", function(event) {
+                    document
+                    .getElementById("search_filter")
+                    .setAttribute("value", event.target.options[event.target.selectedIndex].value); 
+                });
+            </script>
         </div>
         <div class="col-md-5">
             <input id="search-keyword" class="col-md-6 form-control" type="text" name="search_keyword"/>

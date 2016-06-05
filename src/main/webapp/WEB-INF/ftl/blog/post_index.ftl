@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Posts - Gon's Blog - gonapps.io</title>
+        <title>Posts - My Blog</title>
         <meta charset="utf-8"/>
         <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,user-scalable=yes"/>
-        <link href="http://gonapps.io/res/favicon.gif" rel="shortcut icon" type="image/x-icon"/>
-        <script src="//code.jquery.com/jquery.min.js" type="text/javascript"></script>
+        <script src="https://code.jquery.com/jquery.min.js" type="text/javascript"></script>
         <!-- Latest compiled and minified CSS -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
         <!-- Optional theme -->
@@ -18,7 +17,7 @@
         <div class="container">
             <header class="page-header text-center">
                 <h1>
-                    <a href="${settings.getSetting('blog.url')}">Gon's Blog</a>
+                    <a href="${settings.getSetting('blog.url')}">My Blog</a>
                 </h1>
             </header>
             <main>
@@ -59,21 +58,6 @@
                     <li>
                         <a href="${settings.getSetting('blog.url')}">
                         <span class="glyphicon glyphicon-home"></span> Home
-                        </a>
-                    </li>
-                    <li>
-                        <a href="http://gonapps.io/apps">
-                        <span class="glyphicon glyphicon-th"></span> Gon Apps
-                        </a>
-                    </li>
-                    <li>
-                        <a href="https://kiwiirc.com/client/irc.freenode.net/#gonapps">
-                        <span class="glyphicon glyphicon-volume-up"></span> IRC Chat
-                        </a>
-                    </li>
-                    <li>
-                        <a href="http://gonapps.io/about.html">
-                        <span class="glyphicon glyphicon-info-sign"></span> About
                         </a>
                     </li>
                 </ul>

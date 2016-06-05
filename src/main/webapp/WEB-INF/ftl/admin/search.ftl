@@ -1,14 +1,4 @@
 <#include "header.ftl"/>
-<script type="text/javascript">
-    document.addEventListener("change", function(event) {
-        if(event.target.id = "search-filter-select") {
-            document
-            .getElementById("search_filter")
-            .setAttribute("value",
-                event.target.options[event.target.selectedIndex].value); 
-        }
-    });
-</script>
 <form id="search-form" class="form-group" class="" action="${settings.getSetting('admin.url')}/search.do" method="get">
     <input type="hidden" name="action" value="search"/>
     <div class="row">
@@ -22,6 +12,14 @@
                 <option value="days" <#if searchFilter == "days">selected</#if>>Days</option>
             </select>
             <input id="search_filter" type="hidden" name="search_filter" value="${searchFilter}"/>
+            <script>
+                document.getElementById("search-filter-select").addEventListener("change", function(event) {
+                    document
+                    .getElementById("search_filter")
+                    .setAttribute("value",
+                    event.target.options[event.target.selectedIndex].value); 
+                });
+            </script>
         </div>
         <div class="col-md-5">
             <input class="col-md-6 form-control" type="text" name="search_keyword" value="${searchKeyword}"/>
@@ -36,10 +34,9 @@
 
 <hr/>
 <script type="text/javascript">
-    document.addEventListener("click", function(event) {
-        if(event.target.id == "post-delete" && confirm("Do you really want to delete this post?") == false) {
+    document.getElementById("post-delete").addEventListener("click", function(event) {
+        if(confirm("Do you really want to delete this post?") == false)
             event.preventDefault();
-        }
     });
 </script>
 <table class="table table-striped table-hover table-bordered">

@@ -43,7 +43,13 @@
         <li><a href="${settings.getSetting('blog.url')}">Blog Home</a></li>
         <li><a href="${settings.getSetting('admin.url')}/creation_form.do">New Post</a></li>
         <li><a href="${settings.getSetting('admin.url')}/backup.do">Download Backup</a></li>
-        <li><a href="${settings.getSetting('admin.url')}/refresh_all.do">Refresh All Posts</a></li>
+        <li><a id="refresh-all" href="${settings.getSetting('admin.url')}/refresh_all.do">Refresh All Posts</a></li>
+        <script>
+            document.getElementById("refresh-all").addEventListener("click", function(event) {
+                if(confirm("Do you really want to refresh all posts?") == false)
+                    event.preventDefault();
+            });
+        </script>
         <li><a href="${settings.getSetting('admin.url')}/logout.do">Logout</a></li>
         </ul>
         <hr>

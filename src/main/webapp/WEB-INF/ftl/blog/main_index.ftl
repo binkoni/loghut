@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>${post.title} - Gon's Blog - gonapps.io</title>
+        <title>${post.title} - My Blog</title>
         <meta charset="utf-8"/>
         <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,user-scalable=yes"/>
         <meta name="keywords" content="<#list post.tags as tag>${tag.name}<#sep>,</#sep></#list>"/>
-        <link href="http://gonapps.io/res/favicon.gif" rel="shortcut icon" type="image/x-icon"/>
-        <script src="//code.jquery.com/jquery.min.js" type="text/javascript"></script>
+        <script src="https://code.jquery.com/jquery.min.js" type="text/javascript"></script>
         <!-- Latest compiled and minified CSS -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
         <!-- Optional theme -->
@@ -16,24 +15,10 @@
         <style>*{word-wrap:break-word;max-width:100%}</style>
     </head>
     <body>
-        <script type="text/javascript">
-        document.addEventListener("click", function(event) {
-            if(event.target.id == "post-delete" && confirm("Do you really want to delete this post?") == false) {
-                event.preventDefault();
-            }
-        });
-        </script>
         <div class="container">
-            <script>
-                document.addEventListener("click", function(event) {
-                    if(event.target.innerHTML == "delete" && confirm("Do you really want to delete this post?") == false) {
-                        event.preventDefault();
-                    }
-                });
-            </script>
             <header class="page-header text-center">
                 <h1>
-                    <a href="${settings.getSetting('blog.url')}">Gon's Blog</a>
+                    <a href="${settings.getSetting('blog.url')}">My Blog</a>
                 </h1>
             </header>
             <main class="panel panel-default">
@@ -64,6 +49,12 @@
                         <a id="post-delete" class="btn btn-default" href="${settings.getSetting('admin.url')}${post.deletePath}">
                             <span class="glyphicon glyphicon-trash"></span> delete
                         </a>
+                        <script type="text/javascript">
+                            document.getElementById("post-delete").addEventListener("click", function(event) {
+                                if(confirm("Do you really want to delete this post?") == false)
+                                    event.preventDefault();
+                            });
+                        </script>
                     </div>
                 </div>
             </main>
@@ -89,21 +80,6 @@
                     <li>
                         <a href="${settings.getSetting('blog.url')}">
                             <span class="glyphicon glyphicon-home"></span> Home
-                        </a>
-                    </li>
-                    <li>
-                        <a href="http://gonapps.io/apps">
-                            <span class="glyphicon glyphicon-th"></span> Gon Apps
-                        </a>
-                    </li>
-                    <li>
-                        <a href="https://kiwiirc.com/client/irc.freenode.net/#gonapps">
-                            <span class="glyphicon glyphicon-volume-up"></span> IRC Chat
-                        </a>
-                    </li>
-                    <li>
-                        <a href="http://gonapps.io/about.html">
-                            <span class="glyphicon glyphicon-info-sign"></span> About
                         </a>
                     </li>
                 </ul>
