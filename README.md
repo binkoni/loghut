@@ -29,7 +29,7 @@ So in spite of being a script language and support of OOP, your web app developm
 Then I decided to rewrite LogHut with Java for fast performance, use Servlet, Spring, Freemarker for faster development.<br/>
 But this has also a problem.<br/><br/>
 Because OpenJDK Java virtual machine was too slow and due to a lot of dependencies, the application became very slower.<br/><br/>
-Currently the performance is improved by caching and **you need to use JamVM rather than OpenJDK VM for more better performance**.<br/>
+Currently the performance is improved by caching and **you need to use JamVM rather than OpenJDK VM for better performance**.<br/>
 With this improvements the performance of LogHut java version is almost fast as Perl version.<br/><br/>
 
 How to use
@@ -59,6 +59,10 @@ tags.directory=/mnt/web/blog/tags<br/>
 
 nginx /etc/nginx/sites-enabled/default example
 --
+    location ~ ^/blog/admin$ {
+        rewrite /blog/admin /blog/admin/ permanent;
+    }
+
     location ~ /blog/admin/ {
         rewrite ^/blog/admin/(.*)$ /loghut/$1 break;
         proxy_pass http://127.0.0.1:8080;
