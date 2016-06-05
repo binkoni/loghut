@@ -28,7 +28,7 @@
             try {
                 var xhr = new XMLHttpRequest();
                 xhr.onreadystatechange = function() {
-                    if(xhr.readyState == XMLHttpRequest.DONE) {
+                    if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
                         ad = JSON.parse(xhr.responseText);
                         var adText = document.getElementById("loghut-ad-text");
                         adText.innerHTML = "<a href=\"" + ad.link + "\">" + ad.text + "</a>";

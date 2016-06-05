@@ -33,12 +33,6 @@
 </form>
 
 <hr/>
-<script type="text/javascript">
-    document.getElementById("post-delete").addEventListener("click", function(event) {
-        if(confirm("Do you really want to delete this post?") == false)
-            event.preventDefault();
-    });
-</script>
 <table class="table table-striped table-hover table-bordered">
     <thead>
         <tr> 
@@ -62,7 +56,7 @@
                 <br/>
                 (
                     <a href="${settings.getSetting('admin.url')}${post.modificationFormPath}">modify</a>
-                    <a id="post-delete" href="${settings.getSetting('admin.url')}${post.deletePath}">delete</a>
+                    <a class="post-delete" href="${settings.getSetting('admin.url')}${post.deletePath}">delete</a>
                 )
             </td>
             <td>
@@ -75,6 +69,17 @@
             <td>${post.day?c}</td>
         </tr>
         </#list>
+        <script>
+            (function() {
+                var elements = document.getElementsByClassName("post-delete")
+                for (var i = 0; i < elements.length; i++) {
+                    elements[i].addEventListener("click", function(event) {
+                        if(confirm("Do you really want to delete this post?") == false)
+                            event.preventDefault();
+                    });
+                }
+            })();
+        </script>
     </tbody>
 </table>
 <ul class="pagination">
