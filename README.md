@@ -72,6 +72,48 @@ nginx /etc/nginx/sites-enabled/default example
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     }
 
+How to edit templates
+--
+Templates follow Freemarker syntax.<br/>
+First, go to ${extractedDirectory}/WEB-INF/ftl/blog<br/>
+<br/>
+main_index.ftl will be //yourdomain/blog/index.html<br/>
+    This template is provided with 'post' object, 'post' has following attributes:<br/>
+        post.year -> int<br/>
+        post.month -> int<br/>
+        post.day -> int<br/>
+        post.number -> int<br/>
+        post.secretEnabled -> boolean<br/>
+        post.path -> String<br/>
+        post.title -> String<br/>
+        post.text -> String<br/>
+        post.tags -> List of 'tag' object<br/>
+        post.modificationFormPath -> String<br/>
+        post.deletePath -> String<br/>
+<br/>
+post.ftl will be //yourdomain/blog/posts/YYYY/MM/DD_NUMBER.html<br/>
+    This template is provided with 'post' object.<br/>
+<br/>
+secret.ftl will be //yourdomain/blog/admin/secret.do?year=YEAR&month=MONTH&day=DAY&number=NUMBER<br/>
+    This template is provided with 'post' object.<br/>
+<br/>
+year_index.ftl will be //yourdomain/blog/posts/index.html, //yourdomain/blog/tags/TAGNAME/index.html<br/>
+    This template is provided with 'years' object. 'years' is List of String.<br/>
+<br/>
+month_index.ftl will be //yourdomain/blog/YYYY/index.html, //yourdomain/blog/tags/TAGNAME/YYYY/index.html<br/>
+    This template is provided with 'months' object. 'months' is List of String.<br/>
+<br/>
+post_index.ftl will be //yourdomain/blog/YYYY/MM/index.html<br/>
+    This template is provided with 'posts' object. 'posts' is List of 'post' object.<br/>
+<br/>
+tag_name_index.ftl //yourdomain/blog/tags/TAGNAME/index.html<br/>
+    This template is provided with 'tagNames' object. 'tagNames' is List of String.<br/>
+<br/>
+tag_index.ftl //yourdomain/blog/tags/TAGNAME/YYYY/MM/index.html is provided with 'tags' object. 'tags' is List of 'tag' object. 'tag' has following attributes:<br/>
+    tag.name -> String<br/>
+    tag.path -> String<br/>
+    tag.post -> 'post'<br/>
+
 Author
 ---
 Byeonggon Lee (gonny952@gmail.com)
