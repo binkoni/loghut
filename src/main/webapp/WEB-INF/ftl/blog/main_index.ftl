@@ -22,17 +22,17 @@
                 </h1>
             </header>
             <main class="panel panel-default">
-                <div id="loghut-post-title" class="panel-heading text-center">
+                <div class="panel-heading text-center">
                     <h4>${post.title}</h4>
                 </div>
-                <article id="loghut-post-text" class="panel-body">
+                <article class="panel-body">
                     ${post.text}
                 </article>
                 <div class="panel-footer">
                     <span>
                     <strong>Tags:(</strong>
                     <#list post.tags as tag>
-                    <a class="loghut-post-tag label label-default" href="${settings.getSetting('tags.url')}${tag.path}">
+                    <a label label-default" href="${settings.getSetting('tags.url')}${tag.path}">
                     ${tag.name}
                     </a>
                     &nbsp;

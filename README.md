@@ -94,6 +94,10 @@ main_index.ftl will be //yourdomain/blog/index.html<br/>
 post.ftl will be //yourdomain/blog/posts/YYYY/MM/DD_NUMBER.html<br/>
     This template is provided with 'post' object.<br/>
 <br/>
+    post.title must be in html element whose id is 'loghut-post-title'<br/>
+    post.text must be in html element whose id is 'loghut-post-text'<br/>
+    post.tags must be in html element whose class is 'loghut-post-tag'<br/>
+<br/>
 secret.ftl will be //yourdomain/blog/admin/secret.do?year=YEAR&month=MONTH&day=DAY&number=NUMBER<br/>
     This template is provided with 'post' object.<br/>
 <br/>
@@ -134,7 +138,6 @@ License
 ><br/>
 >You should have received a copy of the GNU General Public License
 >along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 
 Software dependencies
 ---

@@ -30,7 +30,7 @@
                     <#list tags as tag>
                     <div class="list-group-item">
                         <a href="<#if tag.post.secretEnabled == true>${settings.getSetting('admin.url')}<#else>${settings.getSetting('posts.url')}</#if>${tag.post.path}"">
-                        ${tag.post.title}
+                        ${tag.post.title} <#if tag.post.secretEnabled == true>(secret)</#if>
                         </a>
                     </div>
                     </#list>
