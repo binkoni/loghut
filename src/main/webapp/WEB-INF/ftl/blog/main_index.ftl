@@ -32,7 +32,7 @@
                     <span>
                     <strong>Tags:(</strong>
                     <#list post.tags as tag>
-                    <a label label-default" href="${settings.getSetting('tags.url')}${tag.path}">
+                    <a class="label label-default" href="${settings.getSetting('tags.url')}${tag.path}">
                     ${tag.name}
                     </a>
                     &nbsp;
