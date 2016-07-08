@@ -24,13 +24,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 public class LoginFormController extends BaseController {
-	
-	@RequestMapping(value = "/login_form.do", method = RequestMethod.GET)
-	public String loginForm(HttpServletRequest request) throws Exception {
-		HttpSession session = request.getSession(false);
-		if(session == null) {
-		    return "admin/login_form";
-		}
-		return "redirect:" + request.getScheme() + "://" + request.getServerName() + getSettingDao().getSetting("admin.url") + "/index.do";
-	}
+    
+    @RequestMapping(value = "/login_form.do", method = RequestMethod.GET)
+    public String loginForm(HttpServletRequest request) throws Exception {
+        HttpSession session = request.getSession(false);
+        if(session == null) {
+            return "admin/login_form";
+        }
+        return "redirect:" + request.getScheme() + "://" + request.getServerName() + getSettingDao().getSetting("admin.url") + "/index.do";
+    }
 }
