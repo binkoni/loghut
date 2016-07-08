@@ -23,18 +23,18 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 public class LoginController extends BaseController {
-	
-	@RequestMapping(value = "/login.do", method = RequestMethod.POST)
-	public String login(HttpServletRequest request,
-			String id, String password, String request_path) throws Exception {
-		if(id.equals(getSettingDao().getSetting("admin.id")) &&
-				password.equals(getSettingDao().getSetting("admin.password"))) {
-			
-		    request.getSession().setMaxInactiveInterval(new Integer(getSettingDao().getSetting("session.timeout")));
-		    if(request_path != null)
-		        return "redirect:" + request.getScheme() + "://" + request.getServerName() + getSettingDao().getSetting("admin.url") + request_path;
-		    return "redirect:" + request.getScheme() + "://" + request.getServerName() + getSettingDao().getSetting("admin.url");
-		} 
-		return "redirect:" + request.getScheme() + "://" + request.getServerName() + getSettingDao().getSetting("admin.url") + "/login_form.do";		
-	}
+
+    @RequestMapping(value = "/login.do", method = RequestMethod.POST)
+    public String login(HttpServletRequest request,
+            String id, String password, String request_path) throws Exception {
+        if(id.equals(getSettingDao().getSetting("admin.id")) &&
+                password.equals(getSettingDao().getSetting("admin.password"))) {
+
+            request.getSession().setMaxInactiveInterval(new Integer(getSettingDao().getSetting("session.timeout")));
+            if(request_path != null)
+                return "redirect:" + request.getScheme() + "://" + request.getServerName() + getSettingDao().getSetting("admin.url") + request_path;
+            return "redirect:" + request.getScheme() + "://" + request.getServerName() + getSettingDao().getSetting("admin.url");
+        } 
+        return "redirect:" + request.getScheme() + "://" + request.getServerName() + getSettingDao().getSetting("admin.url") + "/login_form.do";
+    }
 }
